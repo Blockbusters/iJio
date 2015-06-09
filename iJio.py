@@ -19,19 +19,19 @@ class Login(webapp2.RequestHandler):
         user = users.get_current_user()
 
         if user:
-			# Successful Login
-            self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
-            self.response.write('Hello, ' + user.nickname())
+		# Successful Login
+            	self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
+            	self.response.write('Hello, ' + user.nickname())
         else:
-			# Request for login
-            self.redirect(users.create_login_url(self.request.uri))
+		# Request for login
+            	self.redirect(users.create_login_url(self.request.uri))
 
 GUESTBOOK_MAIN_HTML = """\
 <html>
   <body>
     <form action="/gbw" method="post">
-      <div><textarea name="content" rows="3" cols="60"></textarea></div>
-	  <p>
+    	<div><textarea name="content" rows="3" cols="60"></textarea></div>
+	<p>
       <input type="submit" value="Sign Guestbook">	  
     </form>
 	<form action="/">
@@ -54,7 +54,7 @@ class GuestbookWrite(webapp2.RequestHandler):
 	
 app = webapp2.WSGIApplication([
     ('/', MainPage),
-	('/login', Login),
-	('/gb', Guestbook),
-	('/gbw', GuestbookWrite),
+    ('/login', Login),
+    ('/gb', Guestbook),
+    ('/gbw', GuestbookWrite),
 ], debug=True)

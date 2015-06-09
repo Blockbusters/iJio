@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp/css/shift.css" rel="stylesheet"> <!-- Shift font -->
+		<link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
+		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> <!-- Load jQuery -->
+		<script type="text/javascript" src="static/iJio.js"></script> <!-- JavaScript program -->
+		<link type="text/css" href="/stylesheets/iJio.css" rel="stylesheet"/> <!-- CSS program -->
+	</head>
+	
+	<body>
+		<div class = "menu">
+			<div class="container">
+				<p></p>
+				<!-- Left Menu -->
+				<ul class="pull-left">
+					<li><a href="iJio.html">Home</a></li>
+					<li><a href="about.html">About</a></li>
+					<li><a href="contact.html">Contact us</a></li>
+				</ul>
+				<!-- Right Menu -->
+				<ul class ="pull-right">
+					<li><a href="gb">Sign Guestbook</a></li>
+					<li><a href="login">Log In</a></li>
+					<li><a href="help.html">Help</a></li>
+				</ul>
+			</div>
+		</div>
+		
+		<div class = "header">
+			<div class="container">
+				<div class="row">
+					<!-- Left Photo -->
+					<div class="col-md-2">
+						<br>
+						<div class = "thumbnail">						
+							<img src="static/interface.png" >
+						</div>
+					</div>
+					<div class="col-md-1">
+					</div>
+					<!-- Middle Slide Show -->
+					<div class="col-md-5">
+						<div class="slider">
+							<!-- Pictures in a slide show here -->
+							<div class="slide active-slide">
+								<div class="thumbnail">
+									<img src="static/chompchomp.jpg">	
+								</div>
+								<h2> Chomp Chomp with makan buddies!</h2>
+							</div>
+							<div class="slide">
+								<div class="thumbnail">
+									<img src="static/gardensbythebay.jpg">	
+								</div>
+								<h2> Explore Gardens By The Bay with nature bros!</h2>
+							</div>
+							<div class="slide">
+								<div class="thumbnail">
+									<img src="static/lecture.jpg">	
+								</div>
+								<h2> Go for classes with the mugger-buddies!</h2>
+							</div>
+							<div class="slide">
+								<div class="thumbnail">
+									<img src="static/concert.jpg">	
+								</div>
+								<h2> Attend concerts with fellow fanboy & fangirls!</h2>
+							</div>	
+						</div>
+						<!-- Slider buttons and arrows here-->
+						<div class="slider-nav">
+							<a href="#" class="arrow-prev"><img src="static/arrow-prev.png"></a>
+							<ul class="slider-dots">
+								<!-- &bull; creates the dots -->
+								<li class="dot active-dot">&bull;</li>
+								<li class="dot">&bull;</li>
+								<li class="dot">&bull;</li>
+								<li class="dot">&bull;</li>
+							</ul>
+							<a href="#" class="arrow-next" id='autoClick'><img src="static/arrow-next.png"></a>
+						</div> 
+					</div>
+					<div class="col-md-1">
+					</div>
+					<!-- Right photo -->
+					<div class="col-md-2">
+						<br>
+						<div class="thumbnail">
+							<img src="static/schedule.png">
+						</div>
+					</div>
+				</div>			
+			</div>
+		</div>	
+		
+		<div class = "credits">
+			<div class = "container">
+				<h1> Acknowledgements</h1>
+				<h2> We thank the following who made this website possible: </h2>
+				<!-- Comment: target="_blank" is used to open link in a new window. -->
+				<p><a href="http://www.codecademy.com" target="_blank">Code Academy</a> : for the guide on website development</p>
+				<p><a href="http://pixabay.com" target="_blank">Pixabay</a> : for the free images</p>
+				<p><a href="http://www.templatemonster.com" target="_blank">Template Monster</a> : for the contact form</p>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,80 @@
+import cgi
+import urllib
+import webapp2
+import jinja2
+import os
+
+from google.appengine.api import users
+from google.appengine.ext import ndb
+
+jinja_environment = jinja2.Environment(
+    loader = jinja2.FileSystemLoader(os.path.dirname(__file__) + "/templates"))
+
+class User(ndb.Model):
+    name = ndb.StringProperty()
+    email = ndb.StringProperty()
+    friendlist = ndb.StringProperty(repeated=True, indexed=False) # list of user id
+    eventList = ndb.IntegerProperty(repeated=True, indexed=False) # list of event id
+    #TODO: calendar = ndb.StructuredProperty(Activity, repeated=True, indexed=False)
+
+class Event(ndb.Model):
+    eventID = ndb.IntegerProperty()
+    #datetime = ndb.ComputedProperty()
+    invitedUsers = ndb.StringProperty(repeated=True, indexed=False)
+    acceptedUsers = ndb.StringProperty(repeated=True, indexed=False)
+    rejectedUsers = ndb.StringProperty(repeated=True, indexed=False)
+    
+    #User Inputs
+    name = ndb.StringProperty(indexed=False)
+    location = ndb.StringProperty(indexed=False)
+    description = ndb.StringProperty(indexed=False)
+    dateRange = ndb.IntegerProperty(repeated=True) # pair of start and end date
+ 
+MAIN_PAGE = """\
+    <html>
+		<body>
+		    <a href="/login">Login</a>
+		</body>
+	</html>
+"""
+
+class MainPage(webapp2.RequestHandler):
+    def get(self):
+        self.response.write("iJio TEST PAGE")
+        self.response.write(MAIN_PAGE)
+        
+class LoginPage(webapp2.RequestHandler):
+    def get(self):
+        # Checks for active Google account session
+        user = users.get_current_user()
+
+        if user:
+		# Successful Login
+            	self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
+            	qry = User.query(User.email == user.email())
+            	currentuser = qry.fetch(1)
+            	self.response.write(currentuser)
+            	if qry:
+            	    self.response.write("query failed")
+            	else:
+            	    self.response.write("die")
+        else:
+		# Request for login
+            	self.redirect(users.create_login_url(self.request.uri))
+
+app = webapp2.WSGIApplication([
+    ('/', MainPage),
+    ('/login', LoginPage),
+], debug=True)
+
+
+#TODO: DECIDE ON CALENDAR STRUCTURE
+'''
+    class Activity(ndb.Model):
+    date = ndb.DateProperty()
+    time = ndb.StringProperty()  
+    availability = ndb.BooleanProperty() # true = occupied, false = free
+    
+class BitCalendar(ndb.Model):
+'''
+    

@@ -3,6 +3,7 @@ import urllib
 import webapp2
 import jinja2
 import os
+import time
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
@@ -13,7 +14,7 @@ jinja_environment = jinja2.Environment(
 class User(ndb.Model):
     name = ndb.StringProperty()
     email = ndb.StringProperty()
-    friendlist = ndb.StringProperty(repeated=True, indexed=False) # list of user id
+    friendList = ndb.StringProperty(repeated=True, indexed=False) # list of user id
     eventList = ndb.IntegerProperty(repeated=True, indexed=False) # list of event id
     #TODO: calendar = ndb.StructuredProperty(Activity, repeated=True, indexed=False)
 
@@ -33,16 +34,36 @@ class Event(ndb.Model):
 MAIN_PAGE = """\
     <html>
 		<body>
-		    <a href="/login">Login</a>
+		    <p><a href="/login">Login</a></p>
 		</body>
 	</html>
 """
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
-        self.response.write("iJio TEST PAGE")
+        self.response.write("iJio Main Page")
         self.response.write(MAIN_PAGE)
-        
+ 
+LOGOUT_OPTION = """\
+	<html>
+		<body>
+			<form action="/logout">
+			    <input type="submit" value="Logout">
+			</form>
+		</body>
+	</html>
+"""
+NEWLINE = """\
+<html><body><p></p></body></html>
+"""
+CHANGE_NAME = """\
+<html>
+	<body>
+		<form action="/changename"><input type="submit" value="Change Name"></form>
+	</body>
+</html>
+"""
+ 
 class LoginPage(webapp2.RequestHandler):
     def get(self):
         # Checks for active Google account session
@@ -50,21 +71,58 @@ class LoginPage(webapp2.RequestHandler):
 
         if user:
 		# Successful Login
-            	self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
-            	qry = User.query(User.email == user.email())
-            	currentuser = qry.fetch(1)
-            	self.response.write(currentuser)
-            	if qry:
-            	    self.response.write("query failed")
-            	else:
-            	    self.response.write("die")
+            qry = User.query(User.email == user.email())
+            # New User
+            if qry.count() == 0:
+                self.response.write("Hello " + str(user.email()))
+                self.response.write(NEWLINE + "Welcome to iJio App for the first time!")
+                temp = user.email()
+                newuser = User(name = temp,
+            	                email = temp,
+            	                friendList = [],
+            	                eventList = [])
+                userkey = newuser.put()
+                self.response.write(NEWLINE)
+                self.response.write(LOGOUT_OPTION)
+            # Returning User
+            else:
+            	self.response.write("WELCOME BACK " + str(qry.get().name))
+                self.response.write(CHANGE_NAME)
+                self.response.write(LOGOUT_OPTION)
         else:
 		# Request for login
-            	self.redirect(users.create_login_url(self.request.uri))
+            self.redirect(users.create_login_url(self.request.uri))
+	
+class LogOut(webapp2.RequestHandler):
+	def get(self):
+		self.redirect(users.create_logout_url('/'))
 
+class ChangeName(webapp2.RequestHandler):
+	def get(self):
+		user = users.get_current_user()
+		qry = User.query(User.email == user.email())
+		self.response.write("Current name: " + str(qry.get().name) + NEWLINE)
+		self.response.write("Change to: ")
+		self.response.write("<html><body><form action =\"/update\">\
+		<textarea name=\"content\"></textarea><p><input type=\"submit\" value=\"Change\"></form>\
+		</body></html>")
+		
+class Update(webapp2.RequestHandler):
+	def get(self):
+		user = users.get_current_user()
+		qry = User.query(User.email == user.email())
+		tempUser = qry.get()
+		tempUser.name = self.request.get('content')
+		tempUser.put()
+		time.sleep(1) # import time. Waits for 1 second so that db can be updated with new name.
+		self.redirect("/login")
+		
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/login', LoginPage),
+	('/logout', LogOut),
+	('/changename', ChangeName),
+	('/update', Update),
 ], debug=True)
 
 
@@ -77,4 +135,3 @@ app = webapp2.WSGIApplication([
     
 class BitCalendar(ndb.Model):
 '''
-    

@@ -43,18 +43,16 @@ class MainPage(webapp2.RequestHandler):
     def get(self):
         self.response.write("iJio Main Page")
         self.response.write(MAIN_PAGE)
- 
+        #TODO: to display different things if logged in
+
+#TODO: eventually shift to their individual html files to pretty up.        
 LOGOUT_OPTION = """\
-	<html>
-		<body>
-			<form action="/logout">
-			    <input type="submit" value="Logout">
-			</form>
-		</body>
-	</html>
+	<form action="/logout">
+        <input type="submit" value="Logout">
+	</form>
 """
 NEWLINE = """\
-<html><body><p></p></body></html>
+<p></p>
 """
 CHANGE_NAME = """\
 <html>
@@ -77,8 +75,9 @@ class LoginPage(webapp2.RequestHandler):
                 self.response.write("Hello " + str(user.email()))
                 self.response.write(NEWLINE + "Welcome to iJio App for the first time!")
                 temp = user.email()
-                newuser = User(name = temp,
-            	                email = temp,
+                #possible to redirect to a register page where they can set their name and stuff?
+                newuser = User(name = temp.title(),
+            	                email = temp.lower(),
             	                friendList = [],
             	                eventList = [])
                 userkey = newuser.put()
@@ -97,6 +96,9 @@ class LogOut(webapp2.RequestHandler):
 	def get(self):
 		self.redirect(users.create_logout_url('/'))
 
+#TODO: Is it possible to shove all login required functionality into one python file where we can declare global user and qry?
+#NOTE: sanitize inputs: ensure all names are in Proper Form and all emails are in lowercase.
+#TODO: how to ensure name is not blank? my if blocks seem to crash the program lol
 class ChangeName(webapp2.RequestHandler):
 	def get(self):
 		user = users.get_current_user()
@@ -112,17 +114,50 @@ class Update(webapp2.RequestHandler):
 		user = users.get_current_user()
 		qry = User.query(User.email == user.email())
 		tempUser = qry.get()
-		tempUser.name = self.request.get('content')
+		tempUser.name = self.request.get('content').title()
 		tempUser.put()
 		time.sleep(1) # import time. Waits for 1 second so that db can be updated with new name.
 		self.redirect("/login")
-		
+        
+class Search(webapp2.RequestHandler):
+    def get(self):
+        self.response.write("Who are you searching for?" + NEWLINE)
+        self.response.write("<html><body><form action=\"/searchresults\" method=\"get\" target=\"_blank\">\
+                                Name: <input type=\text\" name=\"name\"><br>\
+                                or <br> Email: <input type=\"text\" name=\"email\"><br>\
+                                <input type=\"submit\" value=\"Submit\"></form></body></html>")
+
+class SearchResults(webapp2.RequestHandler):
+    def get(self):
+        name = self.request.get('name').title()
+        email = self.request.get('email').lower()
+        qry1 = User.query(User.name == name)
+        qry2 = User.query(User.email == email)
+        numFound1 = qry1.count()
+        numFound2 = qry2.count()
+        self.response.write("We found " + str() + " users with name: " + name)
+        self.response.write(" and " + str(numFound2) + " users with email: " + email + NEWLINE)
+        if numFound2 > 0:
+            #email should be unique
+            found = qry2.fetch(1)
+            self.response.write(found)
+        else: 
+            for key in qry1.iter():
+            #need to add check for if key is user
+                self.response.write(key.name)
+                self.response.write(NEWLINE)
+                self.response.write(key.email)
+                self.response.write("  <button>Add Friend</button>")
+                self.response.write(NEWLINE)
+    
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/login', LoginPage),
 	('/logout', LogOut),
 	('/changename', ChangeName),
 	('/update', Update),
+    ('/search', Search),
+    ('/searchresults', SearchResults),
 ], debug=True)
 
 

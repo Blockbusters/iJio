@@ -135,7 +135,7 @@ class SearchResults(webapp2.RequestHandler):
         qry2 = User.query(User.email == email)
         numFound1 = qry1.count()
         numFound2 = qry2.count()
-        self.response.write("We found " + str() + " users with name: " + name)
+        self.response.write("We found " + str(numFound1) + " users with name: " + name)
         self.response.write(" and " + str(numFound2) + " users with email: " + email + NEWLINE)
         if numFound2 > 0:
             #email should be unique

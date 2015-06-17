@@ -16,6 +16,8 @@ class User(ndb.Model):
     email = ndb.StringProperty()
     friendList = ndb.StringProperty(repeated=True, indexed=False) # list of user id
     eventList = ndb.IntegerProperty(repeated=True, indexed=False) # list of event id
+    friendRequestList = ndb.IntegerProperty(repeated=True, indexed=False) # list of user id requesting to be friends
+    friendRequestingList = ndb.IntegerProperty(repeated=True, indexed=False) # list of user id requesting to be friends
     #TODO: calendar = ndb.StructuredProperty(Activity, repeated=True, indexed=False)
 
 class Event(ndb.Model):
@@ -124,6 +126,8 @@ class Search(webapp2.RequestHandler):
                                 or <br> Email: <input type=\"text\" name=\"email\"><br>\
                                 <input type=\"submit\" value=\"Submit\"></form></body></html>")
 
+    
+
 class SearchResults(webapp2.RequestHandler):
     def get(self):
         name = self.request.get('name').title()
@@ -140,13 +144,18 @@ class SearchResults(webapp2.RequestHandler):
             self.response.write(found)
         else: 
             for key in qry1.iter():
-            #need to add check for if key is user
+            #need to add check for if key is self
                 self.response.write(key.name)
+                keyID = key.key.id()
                 self.response.write(NEWLINE)
                 self.response.write(key.email)
-                self.response.write("  <button>Add Friend</button>")
+                self.response.write("   <button method=\"get\" onclick = \"location.href = '/addfriend?value={keyID}'\">Add Friend</button>".format(keyID = keyID))
                 self.response.write(NEWLINE)
-    
+
+class AddFriend(webapp2.RequestHandler):
+    def get(self):
+        self.response.write("ADAD")
+        
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/login', LoginPage),
@@ -156,6 +165,7 @@ app = webapp2.WSGIApplication([
     ('/update', Update),
     ('/search', Search),
     ('/searchresults', SearchResults),
+    ('/addfriend', AddFriend),
 ], debug=True)
 
 

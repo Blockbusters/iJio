@@ -106,7 +106,8 @@ class HomePage(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qry = User.query(User.email == user.email())
-        self.response.write("Welcome to iJio, " + str(qry.get().name))       
+        self.response.write("Welcome to iJio, " + str(qry.get().name))
+        self.response.write("<p>You have " + str(len(qry.get().friendRequestList)) + " friend requests.")
         self.response.write(NEWLINE)
         self.response.write("<form action=\"/manage\"><input type=\"submit\" value=\"Manage Friends\"></form><p>")
         self.response.write(LOGOUT_OPTION)
@@ -136,7 +137,7 @@ class ManageFriends(webapp2.RequestHandler):
 class Search(webapp2.RequestHandler):
     def get(self):
         self.response.write("Who are you searching for?" + NEWLINE)
-        self.response.write("<html><body><form action=\"/searchresults\" method=\"get\">Name: <input type=\text\" name=\"name\"><br>or <br> Email: <input type=\"text\" name=\"email\"><br>\
+        self.response.write("<html><body><form action=\"/searchresults\">Name: <input type=\text\" name=\"name\"><br>or <br> Email: <input type=\"text\" name=\"email\"><br>\
         <input type=\"submit\" value=\"Submit\"></form></body></html>")
 
     

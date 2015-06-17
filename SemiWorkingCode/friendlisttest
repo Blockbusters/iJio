@@ -130,6 +130,14 @@ class ManageFriends(webapp2.RequestHandler):
     def get(self):
         self.response.write("Friend List")
         self.response.write(NEWLINE)
+        user = users.get_current_user()
+        qrySelf = User.query(User.email == user.email())
+        count = 1
+        for friend in qrySelf.get().friendList:
+            qryFriend = User.query(User.email == friend).get()
+            self.response.write(str(count) + ") Name: " + qryFriend.name + ", Email: " + friend + "<br>")
+            count += 1
+        self.response.write(NEWLINE)
         self.response.write("<button method=\"get\" onClick=\"location.href='/search'\">Find Friends</button>")
         self.response.write(NEWLINE)
         self.response.write("<button method=\"get\" onClick=\"location.href='/viewRequest'\">View Friend Request</button>")
@@ -206,7 +214,7 @@ class SearchResults(webapp2.RequestHandler):
                     self.response.write("   <button disabled>Friend Request Sent</button>")
                     self.response.write(NEWLINE)
                 elif case == 4:
-                    self.response.write("   <button disabled>Accept Friend Request</button>")
+                    self.response.write("   <button method=\"get\" onClick=\"location.href='/viewRequest'\">Accept Friend Request</button>")
                     self.response.write(NEWLINE)
                 else:
                     self.response.write("   <button method=\"get\" onclick = \"location.href = '/addfriend?value={email}'\">Add Friend</button>".format(email = email))

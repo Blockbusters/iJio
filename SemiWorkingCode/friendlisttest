@@ -41,9 +41,7 @@ MAIN_PAGE = """\
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
-        self.response.write("iJio Main Page")
-        self.response.write(MAIN_PAGE)
-        #TODO: to display different things if logged in
+        self.redirect("/login")
 
 #TODO: eventually shift to their individual html files to pretty up.        
 LOGOUT_OPTION = """\
@@ -53,13 +51,6 @@ LOGOUT_OPTION = """\
 """
 NEWLINE = """\
 <p></p>
-"""
-CHANGE_NAME = """\
-<html>
-	<body>
-		<form action="/changename"><input type="submit" value="Change Name"></form>
-	</body>
-</html>
 """
  
 class LoginPage(webapp2.RequestHandler):
@@ -72,42 +63,48 @@ class LoginPage(webapp2.RequestHandler):
             qry = User.query(User.email == user.email())
             # New User
             if qry.count() == 0:
-                self.response.write("Hello " + str(user.email()))
-                self.response.write(NEWLINE + "Welcome to iJio App for the first time!")
-                temp = user.email()
-                #possible to redirect to a register page where they can set their name and stuff?
-                newuser = User(name = temp.title(),
-            	                email = temp.lower(),
-            	                friendList = [],
-            	                eventList = [])
-                userkey = newuser.put()
-                self.response.write(NEWLINE)
-                self.response.write(LOGOUT_OPTION)
+                self.redirect("/register")
             # Returning User
             else:
-            	self.response.write("WELCOME BACK " + str(qry.get().name))
-                self.response.write(CHANGE_NAME)
-                self.response.write(LOGOUT_OPTION)
+            	self.redirect("/home")
         else:
 		# Request for login
             self.redirect(users.create_login_url(self.request.uri))
-	
+
+class Register(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        qry = User.query(User.email == user.email())
+        if qry.count() > 0:
+            self.redirect("/home")
+        else:
+            self.response.write("Hello, welcome to iJio App for the first time!")
+            self.response.write(NEWLINE)
+            self.response.write("Name cannot be changed anymore. Think wisely :)")
+            temp = user.email()
+            newuser = User(name = temp.title(), email = temp.lower(),friendList = [], eventList = [])
+            userkey = newuser.put()
+            self.response.write(NEWLINE)
+            self.response.write("What is your name?")
+            self.response.write("<html><body><form action =\"/update\">\
+            <textarea name=\"content\">Default</textarea><p><input type=\"submit\" value=\"Submit Name\"></form>\
+            </body></html>")
+			
 class LogOut(webapp2.RequestHandler):
 	def get(self):
 		self.redirect(users.create_logout_url('/'))
 
-#TODO: Is it possible to shove all login required functionality into one python file where we can declare global user and qry?
-#NOTE: sanitize inputs: ensure all names are in Proper Form and all emails are in lowercase.
-#TODO: how to ensure name is not blank? my if blocks seem to crash the program lol
-class ChangeName(webapp2.RequestHandler):
+class HomePage(webapp2.RequestHandler):
 	def get(self):
 		user = users.get_current_user()
 		qry = User.query(User.email == user.email())
-		self.response.write("Current name: " + str(qry.get().name) + NEWLINE)
-		self.response.write("Change to: ")
-		self.response.write("<html><body><form action =\"/update\">\
-		<textarea name=\"content\"></textarea><p><input type=\"submit\" value=\"Change\"></form>\
-		</body></html>")
+		self.response.write("Welcome to iJio, " + str(qry.get().name))
+		self.response.write(NEWLINE)
+		self.response.write(LOGOUT_OPTION)
+		
+#TODO: Is it possible to shove all login required functionality into one python file where we can declare global user and qry?
+#NOTE: sanitize inputs: ensure all names are in Proper Form and all emails are in lowercase.
+#TODO: how to ensure name is not blank? my if blocks seem to crash the program lol
 		
 class Update(webapp2.RequestHandler):
 	def get(self):
@@ -153,9 +150,10 @@ class SearchResults(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/login', LoginPage),
-	('/logout', LogOut),
-	('/changename', ChangeName),
-	('/update', Update),
+    ('/home', HomePage),
+    ('/register', Register),
+    ('/logout', LogOut),
+    ('/update', Update),
     ('/search', Search),
     ('/searchresults', SearchResults),
 ], debug=True)

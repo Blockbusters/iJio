@@ -106,11 +106,17 @@ class HomePage(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qry = User.query(User.email == user.email())
+        name = qry.get().name
+        numFriends = str(len(qry.get().friendRequestList))
+        template = jinja_environment.get_template('home.html')
+        self.response.out.write(template.render({"name":name,"counter":numFriends}))
+        """user = users.get_current_user()
+        qry = User.query(User.email == user.email())
         self.response.write("Welcome to iJio, " + str(qry.get().name))
         self.response.write("<p>You have " + str(len(qry.get().friendRequestList)) + " friend requests.")        
         self.response.write(NEWLINE)
         self.response.write("<form action=\"/manage\"><input type=\"submit\" value=\"Manage Friends\"></form><p>")
-        self.response.write(LOGOUT_OPTION)
+        self.response.write(LOGOUT_OPTION)"""
 		
 #TODO: Is it possible to shove all login required functionality into one python file where we can declare global user and qry?
 #NOTE: sanitize inputs: ensure all names are in Proper Form and all emails are in lowercase.

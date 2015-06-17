@@ -1,0 +1,10 @@
+.bg{
+    background-color: cornflowerblue;
+}
+input[type=submit]{
+    padding: 15px 10px; /* Area of space (vertical, horizontal)*/
+    border-radius: 10px; /*Button Shape*/
+    background: #47DABD; /*Button background colour*/
+    color: white; /*font color*/
+    /*border: 0 none;*/  /*Only enable this if dont want the border*/
+}

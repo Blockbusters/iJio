@@ -136,11 +136,12 @@ class Search(webapp2.RequestHandler):
         self.response.write("Who are you searching for?" + NEWLINE)
         self.response.write("<html><body><form action=\"/searchresults\">Name: <input type=\text\" name=\"name\"><br>or <br> Email: <input type=\"text\" name=\"email\"><br>\
         <input type=\"submit\" value=\"Submit\"></form></body></html>")
+        self.response.write(BACKHOME)
 
-    
-
-class SearchResults(webapp2.RequestHandler):
+class SearchResults(webapp2.RequestHandler):        
     def get(self):
+        user = users.get_current_user()
+        qrySelf = User.query(User.email == user.email())
         name = self.request.get('name').title()
         email = self.request.get('email').lower()
         qry1 = User.query(User.name == name)
@@ -155,14 +156,38 @@ class SearchResults(webapp2.RequestHandler):
             self.response.write(found)
         else: 
             for key in qry1.iter():
-            #need to add check for if key is self
-                self.response.write(key.name)
                 email = key.email
-                self.response.write(NEWLINE)
-                self.response.write(email)
-                self.response.write("   <button method=\"get\" onclick = \"location.href = '/addfriend?value={email}'\">Add Friend</button>".format(email = email))
-                self.response.write(NEWLINE)
-
+                if email == user.email():
+                    self.response.write(key.name + " (You!)")
+                    self.response.write(NEWLINE)
+                    self.response.write(email)
+                    self.response.write("   <button disabled>Add Friend </button>")
+                    self.response.write(NEWLINE)
+                #check if person has already been added
+                elif checkAdding(email, qrySelf.get()):
+                    self.response.write(key.name)
+                    self.response.write(NEWLINE)
+                    self.response.write(email)
+                    self.response.write("   <button disabled>Add Friend </button>")
+                    self.response.write(NEWLINE)
+                else:
+                    self.response.write(key.name)
+                    self.response.write(NEWLINE)
+                    self.response.write(email)
+                    self.response.write("   <button method=\"get\" onclick = \"location.href = '/addfriend?value={email}'\">Add Friend</button>".format(email = email))
+                    self.response.write(NEWLINE)
+        self.response.write(BACKHOME)
+    
+#check if person has already been added
+def checkAdding(personEmail, user):
+    for i in user.friendList:
+        if personEmail == i:
+            return True
+    for i in user.friendRequestingList:
+        if personEmail == i:
+            return True
+    return False
+        
 class AddFriend(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
@@ -173,7 +198,7 @@ class AddFriend(webapp2.RequestHandler):
         qryFriend.get().friendRequestList.append(user.email())
         qrySelf.get().put()
         qryFriend.get().put()
-        self.response.write("IT WORKS")
+        self.redirect("/search")
         
         
         

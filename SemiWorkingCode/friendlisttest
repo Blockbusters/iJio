@@ -136,7 +136,7 @@ class ManageFriends(webapp2.RequestHandler):
 class Search(webapp2.RequestHandler):
     def get(self):
         self.response.write("Who are you searching for?" + NEWLINE)
-        self.response.write("<html><body><form action=\"/searchresults\" method=\"get\" target=\"_blank\">Name: <input type=\text\" name=\"name\"><br>or <br> Email: <input type=\"text\" name=\"email\"><br>\
+        self.response.write("<html><body><form action=\"/searchresults\" method=\"get\">Name: <input type=\text\" name=\"name\"><br>or <br> Email: <input type=\"text\" name=\"email\"><br>\
         <input type=\"submit\" value=\"Submit\"></form></body></html>")
 
     

@@ -14,10 +14,11 @@ jinja_environment = jinja2.Environment(
 class User(ndb.Model):
     name = ndb.StringProperty()
     email = ndb.StringProperty()
+    userID = ndb.IntegerProperty()
     friendList = ndb.StringProperty(repeated=True, indexed=False) # list of user id
     eventList = ndb.IntegerProperty(repeated=True, indexed=False) # list of event id
-    friendRequestList = ndb.IntegerProperty(repeated=True, indexed=False) # list of user id requesting to be friends
-    friendRequestingList = ndb.IntegerProperty(repeated=True, indexed=False) # list of user id requesting to be friends
+    friendRequestList = ndb.IntegerProperty(repeated=True, indexed=False) # list of user id incoming friends requests
+    friendRequestingList = ndb.IntegerProperty(repeated=True, indexed=False) # list of user id outgoing friend requests
     #TODO: calendar = ndb.StructuredProperty(Activity, repeated=True, indexed=False)
 
 class Event(ndb.Model):
@@ -82,9 +83,11 @@ class Register(webapp2.RequestHandler):
         else:
             self.response.write("Hello, welcome to iJio App for the first time!")
             self.response.write(NEWLINE)
-            self.response.write("Name cannot be changed anymore. Think wisely :)")
+            self.response.write("Note: Name cannot be changed once set.")
             temp = user.email()
-            newuser = User(name = temp.title(), email = temp.lower(),friendList = [], eventList = [])
+            newuser = User(name = temp.title(), email = temp.lower(), friendList = [], eventList = [])
+            userkey = newuser.put()
+            newuser.userID = userkey.id()
             userkey = newuser.put()
             self.response.write(NEWLINE)
             self.response.write("What is your name?")
@@ -121,7 +124,7 @@ class Update(webapp2.RequestHandler):
 class Search(webapp2.RequestHandler):
     def get(self):
         self.response.write("Who are you searching for?" + NEWLINE)
-        self.response.write("<html><body><form action=\"/searchresults\" method=\"get\" target=\"_blank\">\
+        self.response.write("<html><body><form action=\"/searchresults\" method=\"get\">\
                                 Name: <input type=\text\" name=\"name\"><br>\
                                 or <br> Email: <input type=\"text\" name=\"email\"><br>\
                                 <input type=\"submit\" value=\"Submit\"></form></body></html>")
@@ -154,7 +157,10 @@ class SearchResults(webapp2.RequestHandler):
 
 class AddFriend(webapp2.RequestHandler):
     def get(self):
-        self.response.write("ADAD")
+        user = users.get_current_user()
+        toAdd = int(self.request.get('value'))
+        self.response.write(user)
+        
         
 app = webapp2.WSGIApplication([
     ('/', MainPage),

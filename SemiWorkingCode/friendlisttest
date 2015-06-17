@@ -132,8 +132,41 @@ class ManageFriends(webapp2.RequestHandler):
         self.response.write(NEWLINE)
         self.response.write("<button method=\"get\" onClick=\"location.href='/search'\">Find Friends</button>")
         self.response.write(NEWLINE)
+        self.response.write("<button method=\"get\" onClick=\"location.href='/viewRequest'\">View Friend Request</button>")
+        self.response.write(NEWLINE)
         self.response.write(BACKHOME)
-        
+
+class ViewRequests(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        qrySelf = User.query(User.email == user.email())
+        if len(qrySelf.get().friendRequestList) == 0:
+            self.response.write("You have no friend requests.<p>")
+            self.response.write(BACKHOME)
+        else:
+            self.response.write("Friend Requests: <p>")
+            for friend in qrySelf.get().friendRequestList:
+                qryFriend = User.query(User.email == friend)
+                self.response.write("Name: " + qryFriend.get().name)
+                self.response.write("<br>Email: " + qryFriend.get().email)
+                self.response.write("<button method=\"get\" onClick=\"location.href='/acceptFriend?value={email}'\">Accept Friend</button>".format(email = friend))
+                self.response.write(NEWLINE)
+
+class AcceptFriend(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        qrySelf = User.query(User.email == user.email())
+        toAdd = self.request.get('value')
+        qryFriend = User.query(User.email == toAdd)
+        qrySelf.get().friendRequestList.remove(toAdd)
+        qryFriend.get().friendRequestingList.remove(user.email())
+        qrySelf.get().friendList.append(toAdd)
+        qryFriend.get().friendList.append(user.email())
+        qrySelf.get().put()
+        qryFriend.get().put()
+        time.sleep(1)
+        self.redirect("/viewRequest")
+       
 class Search(webapp2.RequestHandler):
     def get(self):
         self.response.write("Who are you searching for?" + NEWLINE)
@@ -222,6 +255,8 @@ app = webapp2.WSGIApplication([
     ('/searchresults', SearchResults),
     ('/addfriend', AddFriend),
     ('/manage', ManageFriends),
+    ('/viewRequest', ViewRequests),
+    ('/acceptFriend', AcceptFriend),
 ], debug=True)
 
 

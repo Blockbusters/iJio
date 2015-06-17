@@ -14,15 +14,14 @@ jinja_environment = jinja2.Environment(
 class User(ndb.Model):
     name = ndb.StringProperty()
     email = ndb.StringProperty()
-    userID = ndb.IntegerProperty()
     friendList = ndb.StringProperty(repeated=True, indexed=False) # list of user id
     eventList = ndb.IntegerProperty(repeated=True, indexed=False) # list of event id
-    friendRequestList = ndb.IntegerProperty(repeated=True, indexed=False) # list of user id incoming friends requests
-    friendRequestingList = ndb.IntegerProperty(repeated=True, indexed=False) # list of user id outgoing friend requests
+    friendRequestList = ndb.StringProperty(repeated=True, indexed=False) # list of user id incoming friends requests
+    friendRequestingList = ndb.StringProperty(repeated=True, indexed=False) # list of user id outgoing friend requests
     #TODO: calendar = ndb.StructuredProperty(Activity, repeated=True, indexed=False)
 
 class Event(ndb.Model):
-    eventID = ndb.IntegerProperty()
+    eventID = ndb.IntegerProperty() #query count to associate ID
     #datetime = ndb.ComputedProperty()
     invitedUsers = ndb.StringProperty(repeated=True, indexed=False)
     acceptedUsers = ndb.StringProperty(repeated=True, indexed=False)
@@ -90,8 +89,6 @@ class Register(webapp2.RequestHandler):
             temp = user.email()
             newuser = User(name = temp.title(), email = temp.lower(), friendList = [], eventList = [])
             userkey = newuser.put()
-            newuser.userID = userkey.id()
-            userkey = newuser.put()
             self.response.write(NEWLINE)
             self.response.write("What is your name?")
             self.response.write("<html><body><form action =\"/update\">\
@@ -106,8 +103,7 @@ class HomePage(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qry = User.query(User.email == user.email())
-        self.response.write("Welcome to iJio, " + str(qry.get().name))
-        self.response.write("<p>You have " + str(len(qry.get().friendRequestList)) + " friend requests.")
+        self.response.write("Welcome to iJio, " + str(qry.get().name))       
         self.response.write(NEWLINE)
         self.response.write("<form action=\"/manage\"><input type=\"submit\" value=\"Manage Friends\"></form><p>")
         self.response.write(LOGOUT_OPTION)
@@ -160,17 +156,22 @@ class SearchResults(webapp2.RequestHandler):
             for key in qry1.iter():
             #need to add check for if key is self
                 self.response.write(key.name)
-                keyID = key.key.id()
+                email = key.email
                 self.response.write(NEWLINE)
-                self.response.write(key.email)
-                self.response.write("   <button method=\"get\" onclick = \"location.href = '/addfriend?value={keyID}'\">Add Friend</button>".format(keyID = keyID))
+                self.response.write(email)
+                self.response.write("   <button method=\"get\" onclick = \"location.href = '/addfriend?value={email}'\">Add Friend</button>".format(email = email))
                 self.response.write(NEWLINE)
 
 class AddFriend(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
-        toAdd = int(self.request.get('value'))
-        self.response.write(user)
+        qrySelf = User.query(User.email == user.email())
+        toAdd = self.request.get('value')
+        qryFriend = User.query(User.email == toAdd)
+        qrySelf.get().friendRequestingList.append(toAdd)
+        qryFriend.get().friendRequestList.append(user.email())
+        self.response.write("IT WORKS")
+        
         
         
 app = webapp2.WSGIApplication([

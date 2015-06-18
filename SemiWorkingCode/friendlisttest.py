@@ -101,7 +101,11 @@ class Register(webapp2.RequestHandler):
         qry = User.query(User.email == user.email())
         if qry.count() > 0:
             self.redirect("/home")
-        else:     
+        else:
+            calendar = []
+            initweek = 1111111111111111111111111111
+            for i in range(12):
+                month = Month(w1 = 1111111111111111111111111111, w2 = 1111111111111111111111111111, w3 = 1111111111111111111111111111, w4 = 1111111111111111111111111111)
             temp = user.email()
             newuser = User(name = temp.title(), email = temp.lower(), friendList = [], eventList = [])
             userkey = newuser.put()

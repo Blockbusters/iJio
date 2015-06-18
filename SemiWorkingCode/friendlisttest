@@ -101,22 +101,12 @@ class Register(webapp2.RequestHandler):
         qry = User.query(User.email == user.email())
         if qry.count() > 0:
             self.redirect("/home")
-        else:
-            self.response.write("Hello, welcome to iJio App for the first time!")
-            self.response.write(NEWLINE)
-            self.response.write("Note: Name cannot be changed once set.")
-            calendar = []
-            initweek = 1111111111111111111111111111
-            for i in range(12):
-                month = Month(w1 = 1111111111111111111111111111, w2 = 1111111111111111111111111111, w3 = 1111111111111111111111111111, w4 = 1111111111111111111111111111)
+        else:     
             temp = user.email()
             newuser = User(name = temp.title(), email = temp.lower(), friendList = [], eventList = [])
             userkey = newuser.put()
-            self.response.write(NEWLINE)
-            self.response.write("What is your name?")
-            self.response.write("<html><body><form action =\"/update\">\
-            <textarea name=\"content\">Default</textarea><p><input type=\"submit\" value=\"Submit Name\"></form>\
-            </body></html>")
+            template = jinja_environment.get_template('register.html')
+            self.response.out.write(template.render())
 			
 class LogOut(webapp2.RequestHandler):
 	def get(self):
@@ -146,22 +136,17 @@ class Update(webapp2.RequestHandler):
 		self.redirect("/login")
 
 class ManageFriends(webapp2.RequestHandler):
-    def get(self):
-        self.response.write("Friend List")
-        self.response.write(NEWLINE)
+    def get(self):        
         user = users.get_current_user()
         qrySelf = User.query(User.email == user.email())
+        friendListPrint = []
         count = 1
         for friend in qrySelf.get().friendList:
             qryFriend = User.query(User.email == friend).get()
-            self.response.write(str(count) + ") Name: " + qryFriend.name + ", Email: " + friend + "<br>")
+            friendListPrint.append(str(count) + ") Name: " + qryFriend.name + ", Email: " + friend + "<br>")
             count += 1
-        self.response.write(NEWLINE)
-        self.response.write("<button method=\"get\" onClick=\"location.href='/search'\">Find Friends</button>")
-        self.response.write(NEWLINE)
-        self.response.write("<button method=\"get\" onClick=\"location.href='/viewRequest'\">View Friend Request</button>")
-        self.response.write(NEWLINE)
-        self.response.write(BACKHOME)
+        template = jinja_environment.get_template('friendlist.html')
+        self.response.out.write(template.render({"printList" : friendListPrint}))
 
 class ViewRequests(webapp2.RequestHandler):
     def get(self):

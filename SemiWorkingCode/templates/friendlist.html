@@ -6,28 +6,30 @@
         <title>Friends</title>
     </head>
     <body class = "body">
-        <div class = "main">
-            <h1>Friend List</h1>
-            {% for friend in printList: %}
-                <p>{{ friend }}</p>
-            {% endfor %}
-        </div>
-        <div class = "navigate">
-            <div class="row">
-                <div class ="col-md-4">
-                </div>
-                <div class="col-md-2">
-                    <button class="click" method ="get" onClick="location.href='/search'">Find Friends</button>
-                </div>
-                <div class="col-md-2">
-                    <button class="click" method ="get" onClick="location.href='/viewRequest'">View Friend Request</button>
-                </div>
+        <div class="container">
+            <div class = "main">
+                <h1>Friend List</h1>
+                {% for friend in printList: %}
+                    <p>{{ friend }}</p>
+                {% endfor %}
             </div>
-            <div class="row">
-                <div class="col-md-4">
+            <div class = "navigate">
+                <div class="row">
+                    <div class ="col-md-3">
+                    </div>
+                    <div class="col-md-3">
+                        <button class="click" method ="get" onClick="location.href='/search'">Find Friends</button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="click" method ="get" onClick="location.href='/viewRequest'">View Friend Request</button>
+                    </div>
                 </div>
-                <div class="col-md-2">
-                    <button class="click" method="get" onClick="location.href='/home' ">Back to Home Page</button>
+                <div class="row">
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-3">
+                        <button class="click" method="get" onClick="location.href='/home' ">Back to Home Page</button>
+                    </div>
                 </div>
             </div>
         </div>

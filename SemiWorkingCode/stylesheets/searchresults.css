@@ -11,3 +11,9 @@
     margin-bottom: 25px;
     /*border: 0 none;*/  /*Only enable this if dont want the border*/
 }
+.box .disabled{
+    background:#dddddd;
+    color:gray;
+    cursor:not-allowed;
+    opacity:0.5;
+}

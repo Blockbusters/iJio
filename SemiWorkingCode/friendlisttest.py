@@ -101,13 +101,13 @@ class Register(webapp2.RequestHandler):
         qry = User.query(User.email == user.email())
         if qry.count() > 0:
             self.redirect("/home")
-        else:
-            calendar = []
-            initweek = 1111111111111111111111111111
+	else:
+            tcalendar = []
             for i in range(12):
-                month = Month(w1 = 1111111111111111111111111111, w2 = 1111111111111111111111111111, w3 = 1111111111111111111111111111, w4 = 1111111111111111111111111111)
+                tmonth = Month(month = i + 1, w1 = 0xFFFFFFFF, w2 = 0xFFFFFFFF, w3 = 0xFFFFFFFF, w4 = 0xFFFFFFFF)
+                tcalendar.append(tmonth)
             temp = user.email()
-            newuser = User(name = temp.title(), email = temp.lower(), friendList = [], eventList = [])
+            newuser = User(name = temp.title(), email = temp.lower(), friendList = [], eventList = [], calendar = tcalendar)
             userkey = newuser.put()
             template = jinja_environment.get_template('register.html')
             self.response.out.write(template.render())
@@ -235,9 +235,37 @@ class ManageTimetable(webapp2.RequestHandler):
         user = users.get_current_user()
         qrySelf = User.query(User.email == user.email()).get()
         now = datetime.datetime.now(tz)
-        self.response.write("Today is " + str(now.day) + "-" + str(now.month) + "-" + str(now.year))
-        self.response.write("<p> The time now is " + str(now.hour) + ":" + str(now.minute))
-        month = qrySelf.calendar
+        monthStr = now.strftime("%B")
+        month = now.month
+        #self.response.write("Today is " + str(now.day) + "-" + str(now.month) + "-" + str(now.year))
+        #self.response.write("<p> The time is now " + str(now.hour) + ":" + str(now.minute))
+        self.response.write(monthStr)
+        self.response.write("<br>")
+        userMonth = []
+        userMonthObj = qrySelf.calendar[month - 1]
+        userMonth.append(userMonthObj.w1)
+        userMonth.append(userMonthObj.w2)
+        userMonth.append(userMonthObj.w3)
+        userMonth.append(userMonthObj.w4)
+        counter = 0
+        self.response.write("<form action=\"/updatetime\" method=\"GET\">")
+        for i in userMonth:
+            for bit in str(bin(i)[2:]):
+                if counter % 4 == 0:
+                    day = counter / 4 + 1
+                    self.response.write("<br>Day ")
+                    self.response.write(day)
+                if bit == 0:
+                    self.response.write("<input type=\"checkbox\" name = \"Free\" id = \"{id}\" checked=\"checked\"></input>".format(id = counter))
+                else:
+                    self.response.write("<input type=\"checkbox\" \"hi\"></input>")
+                counter += 1
+        self.response.write("<br><input type = \"submit\"></input>")
+        self.response.write("</form>")
+
+class UpdateTime(webapp2.RequestHandler):
+    def get(self):
+        self.response.write("HI")
                
 app = webapp2.WSGIApplication([
     ('/', MainPage),
@@ -253,6 +281,7 @@ app = webapp2.WSGIApplication([
     ('/viewRequest', ViewRequests),
     ('/acceptFriend', AcceptFriend),
     ('/managetimetable', ManageTimetable),
+    ('/updatetime', UpdateTime)
 ], debug=True)
 
 

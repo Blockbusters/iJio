@@ -1,0 +1,24 @@
+.body{
+    background-color: cornflowerblue;
+    text-align:center
+}
+.main h1{
+    font-size: 50px;
+    text-decoration: underlined;
+}
+.main p{
+    font-size: 20px;
+    padding-right: 50px;
+    margin-left: 600px;
+    margin-right: 600px;
+    border: 2px solid black;
+}
+
+.navigate .click{
+    background-color: #47DABD;
+    border-radius: 10px;/*Button Shape*/
+    padding: 15px 10px; /* Area of space (vertical, horizontal)*/
+    width: 280px;
+    color: white;
+    margin-bottom: 25px;
+}

@@ -185,52 +185,24 @@ class AcceptFriend(webapp2.RequestHandler):
        
 class Search(webapp2.RequestHandler):
     def get(self):
-        self.response.write("Who are you searching for?" + NEWLINE)
-        self.response.write("<html><body><form action=\"/searchresults\">Name: <input type=\text\" name=\"name\"><br>or <br> Email: <input type=\"text\" name=\"email\"><br>\
-        <input type=\"submit\" value=\"Submit\"></form></body></html>")
-        self.response.write(BACKHOME)
+        template = jinja_environment.get_template('search.html')
+        self.response.out.write(template.render())
 
 class SearchResults(webapp2.RequestHandler):        
     def get(self):
         user = users.get_current_user()
         qrySelf = User.query(User.email == user.email())
         name = self.request.get('name').title()
-        email = self.request.get('email').lower()
         qry1 = User.query(User.name == name)
-        qry2 = User.query(User.email == email)
         numFound1 = qry1.count()
-        numFound2 = qry2.count()
-        self.response.write("We found " + str(numFound1) + " users with name: " + name)
-        self.response.write(" and " + str(numFound2) + " users with email: " + email + NEWLINE)
-        if numFound2 > 0:
-            #email should be unique
-            found = qry2.fetch(1)
-            self.response.write(found)
-        else: 
-            for key in qry1.iter():
-                email = key.email
-                self.response.write(key.name)
-                self.response.write(NEWLINE)
-                self.response.write(email)
-                case = checkAdding(email, qrySelf.get())
-                if case == 1:
-                    self.response.write("   <button disabled>You!</button>")
-                elif case == 2:
-                    self.response.write("   <button disabled>Friends</button>")
-                    self.response.write(NEWLINE)
-                elif case == 3:
-                    self.response.write("   <button disabled>Friend Request Sent</button>")
-                    self.response.write(NEWLINE)
-                elif case == 4:
-                    self.response.write("   <button method=\"get\" onClick=\"location.href='/viewRequest'\">Accept Friend Request</button>")
-                    self.response.write(NEWLINE)
-                else:
-                    self.response.write("   <button method=\"get\" onclick = \"location.href = '/addfriend?value={email}'\">Add Friend</button>".format(email = email))
-                    self.response.write(NEWLINE)
-                self.response.write(NEWLINE)
-        self.response.write(BACKSEARCH)
-        self.response.write(BACKHOME)
-    
+        pair = []
+        for key in qry1.iter():
+            email = key.email
+            case = checkAdding(email, qrySelf.get())
+            pair.append([key.name, key.email, case])  
+        template = jinja_environment.get_template('searchresults.html')
+        self.response.out.write(template.render({"numFoundName":numFound1,"name":name, "pair":pair})) 
+            
 #check if person has already been added
 def checkAdding(personEmail, user):
     if personEmail == user.email:

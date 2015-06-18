@@ -15,11 +15,11 @@
                 <p>{{ key[0] }}, 
                 {{ key[1] }}
                 {% if key[2] == 1: %}
-                    <button disabled>You!</button>
+                    <button disabled class="disabled">You!</button>
                 {% elif key[2] == 2: %}
-                    <button disabled>Friends</button>
+                    <button disabled class="disabled">Friends</button>
                 {% elif key[2] == 3: %}
-                    <button disabled>Friend Request Sent</button>
+                    <button disabled class="disabled">Friend Request Sent</button>
                 {% elif key[2] == 4: %}
                     <button method="get" onClick="location.href='/viewRequest'">Accept Friend Request</button>
                 {% else: %}

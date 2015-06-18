@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
+        <link type="text/css" href="/stylesheets/searchresults.css" rel="stylesheet"/> <!-- CSS program -->
+        <title>Search Results</title>
+    </head>
+    <body class = "bg">       
+        <div class = "main">
+            <h1>Search Results</h1>
+            <p>We have found {{numFoundName}} users with name: {{ name }}</p>
+        </div>
+        <div class = "box">
+            {% for key in pair:%}
+                <p>{{ key[0] }}, 
+                {{ key[1] }}
+                {% if key[2] == 1: %}
+                    <button disabled>You!</button>
+                {% elif key[2] == 2: %}
+                    <button disabled>Friends</button>
+                {% elif key[2] == 3: %}
+                    <button disabled>Friend Request Sent</button>
+                {% elif key[2] == 4: %}
+                    <button method="get" onClick="location.href='/viewRequest'">Accept Friend Request</button>
+                {% else: %}
+                    <button method="get" onclick = "location.href = '/addfriend?value={{key[1]}}'">Add Friend</button>
+                {% endif %}</p>
+            {%endfor%}
+            
+            <button class="friend" method="get" onClick="location.href='/search' ">Back to Search</button><p>
+            <button class="friend" method="get" onClick="location.href='/home' ">Back to Home Page</button>      
+        </div>
+    </body>
+</html>

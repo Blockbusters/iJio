@@ -4,6 +4,7 @@ import webapp2
 import jinja2
 import os
 import time
+import datetime
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
@@ -11,6 +12,29 @@ from google.appengine.ext import ndb
 jinja_environment = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__) + "/templates"))
 
+class UTC0800(datetime.tzinfo):
+    """tzinfo derived concrete class named "+0800" with offset of 28800"""
+    # can be configured here
+    _offset = datetime.timedelta(seconds = 28800)
+    _dst = datetime.timedelta(0)
+    _name = "+0800"
+    def utcoffset(self, dt):
+        return self.__class__._offset
+    def dst(self, dt):
+        return self.__class__._dst
+    def tzname(self, dt):
+        return self.__class__._name
+tz = UTC0800()
+       
+class Month(ndb.Model):
+    year = ndb.IntegerProperty(indexed=False)
+    month = ndb.IntegerProperty(indexed=False)
+    # 0 means busy, 1 is free.
+    w1 = ndb.IntegerProperty(indexed=False) # stores 32 bits: (Morn/Aft/Eve/Night)
+    w2 = ndb.IntegerProperty(indexed=False)
+    w3 = ndb.IntegerProperty(indexed=False)
+    w4 = ndb.IntegerProperty(indexed=False)
+        
 class User(ndb.Model):
     name = ndb.StringProperty()
     email = ndb.StringProperty()
@@ -18,7 +42,7 @@ class User(ndb.Model):
     eventList = ndb.IntegerProperty(repeated=True, indexed=False) # list of event id
     friendRequestList = ndb.StringProperty(repeated=True, indexed=False) # list of user id incoming friends requests
     friendRequestingList = ndb.StringProperty(repeated=True, indexed=False) # list of user id outgoing friend requests
-    #TODO: calendar = ndb.StructuredProperty(Activity, repeated=True, indexed=False)
+    calendar = ndb.StructuredProperty(Month, repeated = True) # Personal Calendar of months
 
 class Event(ndb.Model):
     eventID = ndb.IntegerProperty() #query count to associate ID
@@ -81,6 +105,10 @@ class Register(webapp2.RequestHandler):
             self.response.write("Hello, welcome to iJio App for the first time!")
             self.response.write(NEWLINE)
             self.response.write("Note: Name cannot be changed once set.")
+            calendar = []
+            initweek = 1111111111111111111111111111
+            for i in range(12):
+                month = Month(w1 = 1111111111111111111111111111, w2 = 1111111111111111111111111111, w3 = 1111111111111111111111111111, w4 = 1111111111111111111111111111)
             temp = user.email()
             newuser = User(name = temp.title(), email = temp.lower(), friendList = [], eventList = [])
             userkey = newuser.put()
@@ -244,10 +272,12 @@ class AddFriend(webapp2.RequestHandler):
 class ManageTimetable(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
-        qrySelf = User.query(User.email == user.email())
-        self.response.write("HELLO!")
-        
-        
+        qrySelf = User.query(User.email == user.email()).get()
+        now = datetime.datetime.now(tz)
+        self.response.write("Today is " + str(now.day) + "-" + str(now.month) + "-" + str(now.year))
+        self.response.write("<p> The time now is " + str(now.hour) + ":" + str(now.minute))
+        month = qrySelf.calendar
+               
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/login', LoginPage),

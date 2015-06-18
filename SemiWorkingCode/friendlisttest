@@ -32,14 +32,6 @@ class Event(ndb.Model):
     location = ndb.StringProperty(indexed=False)
     description = ndb.StringProperty(indexed=False)
     dateRange = ndb.IntegerProperty(repeated=True) # pair of start and end date
- 
-MAIN_PAGE = """\
-    <html>
-		<body>
-		    <p><a href="/login">Login</a></p>
-		</body>
-	</html>
-"""
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
@@ -110,13 +102,6 @@ class HomePage(webapp2.RequestHandler):
         numFriends = str(len(qry.get().friendRequestList))
         template = jinja_environment.get_template('home.html')
         self.response.out.write(template.render({"name":name,"counter":numFriends}))
-        """user = users.get_current_user()
-        qry = User.query(User.email == user.email())
-        self.response.write("Welcome to iJio, " + str(qry.get().name))
-        self.response.write("<p>You have " + str(len(qry.get().friendRequestList)) + " friend requests.")        
-        self.response.write(NEWLINE)
-        self.response.write("<form action=\"/manage\"><input type=\"submit\" value=\"Manage Friends\"></form><p>")
-        self.response.write(LOGOUT_OPTION)"""
 		
 #TODO: Is it possible to shove all login required functionality into one python file where we can declare global user and qry?
 #NOTE: sanitize inputs: ensure all names are in Proper Form and all emails are in lowercase.
@@ -255,7 +240,12 @@ class AddFriend(webapp2.RequestHandler):
         qrySelf.get().put()
         qryFriend.get().put()
         self.redirect("/search")
-        
+
+class ManageTimetable(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        qrySelf = User.query(User.email == user.email())
+        self.response.write("HELLO!")
         
         
 app = webapp2.WSGIApplication([
@@ -271,6 +261,7 @@ app = webapp2.WSGIApplication([
     ('/manage', ManageFriends),
     ('/viewRequest', ViewRequests),
     ('/acceptFriend', AcceptFriend),
+    ('/managetimetable', ManageTimetable),
 ], debug=True)
 
 

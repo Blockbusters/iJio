@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
+        <link type="text/css" href="/stylesheets/search.css" rel="stylesheet"/> <!-- CSS program -->
+        <title>Search Friends</title>
+    </head>
+    <body class = "bg">       
+        <div class = "main">
+            <h1>Search Friends</h1>
+            <p>Who are you searching for?</p>
+        </div>
+        <div class = "fill">
+            <form action="/searchresults">
+                Name: <input type="text" name="name"><br>or <br> 
+                Email: <input type="text" name="email"><br><br>
+                <input type="submit" value="Submit">
+            </form>
+            <form action="/home">
+                <input type="submit" value="Back to Home Page">
+            </form>
+        </div>
+    </body>
+</html>

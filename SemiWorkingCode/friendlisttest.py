@@ -266,7 +266,16 @@ class ManageTimetable(webapp2.RequestHandler):
 class UpdateTime(webapp2.RequestHandler):
     def get(self):
         self.response.write("HI")
-               
+
+
+class CreateEvents(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        qrySelf = User.query(User.email == user.email()).get()
+        namelist = qrySelf.friendList
+        template = jinja_environment.get_template('createevents.html')
+        self.response.out.write(template.render({"friendlist":namelist})) 
+        
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/login', LoginPage),
@@ -281,9 +290,9 @@ app = webapp2.WSGIApplication([
     ('/viewRequest', ViewRequests),
     ('/acceptFriend', AcceptFriend),
     ('/managetimetable', ManageTimetable),
-    ('/updatetime', UpdateTime)
+    ('/updatetime', UpdateTime),
+    ('/createevents', CreateEvents),
 ], debug=True)
-
 
 #TODO: DECIDE ON CALENDAR STRUCTURE
 '''

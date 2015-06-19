@@ -42,7 +42,21 @@ var main = function(){
                 textbox.val(textbox.val() + "," + name);
             }
         }
-    });     
+    }); 
+    // Date picker Start Date
+    $('input.datepicker-start').Zebra_DatePicker({
+        direction: true, // Only can select dates today or in the future.
+        pair: $('input.datepicker-end'), // Paired with another date to create a range
+        format: 'd/m/Y', // Format to display date. e.g. 20/06/2015
+        onChange: function(d1,d2,d3){ // Clears the end date field whenever start date is changed
+            $('.datepicker-end').val("");
+        }
+    });
+    // Date picker End Date
+    $('input.datepicker-end').Zebra_DatePicker({
+        format: 'd/m/Y', // Format to display date. e.g. 20/06/2015
+        direction: [1, 21] // Calendar starts tomorrow and ends 21 days after that.
+    });
 };
 
 $(document).ready(main);

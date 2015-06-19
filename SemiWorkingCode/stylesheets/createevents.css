@@ -1,0 +1,55 @@
+.body{
+    background-color: cornflowerblue;
+}
+.main h1{
+    text-decoration: underline;
+    text-align:center;
+}
+.event h3{
+    font-size: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.event textarea{
+    resize: none;
+}
+
+.event .click{
+    background-color: #47DABD;
+    border-radius: 10px;/*Button Shape*/
+    padding: 15px 10px; /* Area of space (vertical, horizontal)*/
+    width: 280px;
+    color: white;
+    margin-bottom: 25px;
+}
+
+.friendmenu{
+    position:absolute;
+	visibility:hidden;
+	border-top:1px solid #fff;
+	margin:0;
+	padding:0;
+    border: none;
+    background-color: #47DABD;
+    z-index: 100; /*High z-index brings it to front, lower z-index will be bring to back*/
+}
+
+.friendmenu li{
+    display: inline;
+    float: none;
+    display: block;
+    padding: 10px 15px;
+    width: 280px;
+}
+
+.friendmenu li a:link, .friendmenu li a:visited{
+    color: white;
+    width: auto;
+}
+
+.friendmenu img{
+    visibility: hidden;
+}
+
+.added{} /*Do not remove this!*/

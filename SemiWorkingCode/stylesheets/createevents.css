@@ -21,16 +21,16 @@
     padding: 15px 10px; /* Area of space (vertical, horizontal)*/
     width: 280px;
     color: white;
-    margin-bottom: 25px;
+    margin-bottom: 5px;
 }
 
 .friendmenu{
     position:absolute;
 	visibility:hidden;
-	border-top:1px solid #fff;
 	margin:0;
 	padding:0;
-    border: none;
+    padding-bottom: 50px;
+    border: 1px solid #fff;
     background-color: #47DABD;
     z-index: 100; /*High z-index brings it to front, lower z-index will be bring to back*/
 }

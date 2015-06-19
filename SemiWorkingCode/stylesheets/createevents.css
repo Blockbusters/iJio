@@ -10,6 +10,16 @@
     text-align: center;
     font-weight: bold;
 }
+.event h4{
+    font-size: 12px;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 17px;
+}
+
+.event .friend a{
+    text-decoration: none;
+}
 
 .event textarea{
     resize: none;
@@ -53,3 +63,7 @@
 }
 
 .added{} /*Do not remove this!*/
+
+.datepicker-start, .datepicker-end{
+    margin-top: 10px;
+}

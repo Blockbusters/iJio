@@ -274,7 +274,21 @@ class CreateEvents(webapp2.RequestHandler):
         qrySelf = User.query(User.email == user.email()).get()
         namelist = qrySelf.friendList
         template = jinja_environment.get_template('createevents.html')
-        self.response.out.write(template.render({"friendlist":namelist})) 
+        self.response.out.write(template.render({"friendlist":namelist}))
+
+class ProcessEvent(webapp2.RequestHandler):
+    def get(self):
+        # This is a TEMP filler to show how to retrieve data from the Create Events Page.
+        # Remember: Check if any inputs is empty and display error message.
+        temp = self.request.get('invite')
+        start = self.request.get('datestart')
+        end = self.request.get('dateend')
+        eventname = self.request.get('eventname')
+        eventloc = self.request.get('eventloc')
+        description = self.request.get('descr')
+        self.response.write("Invited Users: " + temp + "<p>" + "Date Range: " + start + " to " + end)
+        self.response.write("<p>Event: " + eventname + " @ " + eventloc + "<p>")
+        self.response.write("Description of event: " + description)
         
 app = webapp2.WSGIApplication([
     ('/', MainPage),
@@ -292,6 +306,7 @@ app = webapp2.WSGIApplication([
     ('/managetimetable', ManageTimetable),
     ('/updatetime', UpdateTime),
     ('/createevents', CreateEvents),
+    ('/processevent', ProcessEvent),
 ], debug=True)
 
 #TODO: DECIDE ON CALENDAR STRUCTURE

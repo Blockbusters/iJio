@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
+        <link type="text/css" href="/stylesheets/createevents.css" rel="stylesheet"/> <!-- CSS program -->
+        <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> <!-- Load jQuery -->
+		<script type="text/javascript" src="static/createevents.js"></script> <!-- JavaScript program -->
+        <title>Create Events</title>
+    </head>
+    <body class = "body">
+        <div class="container">
+            <div class = "main">
+                <h1>Create Events</h1>
+            </div>
+            <div class = "event">
+                <div class="row">
+                    <div class ="col-md-2">
+                        <h3> Who to invite: </h3>
+                    </div>
+                    <div class="col-md-4">
+                        <textarea disabled name="invite" id="invite" style="width:380px; height 60px;">No friends</textarea>
+                    </div>
+                    <div class="col-md-3">   
+                        <button class="click" id="friendbtn">Friend List</button>
+                        <ul class="friendmenu" id="friendmenu">
+                            {% for pengyou in friendlist: %}
+                                <li class="friend"><a href="#">{{pengyou}}</a><img src="static/tick.png"></img></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class ="col-md-2">
+                        <h3> Specify date range: </h3>
+                    </div>
+                    <div class="col-md-4">
+                        <textarea disabled name="daterange" id="daterange" style="width:380px; height 60px;"></textarea>
+                    </div>
+                    <div class="col-md-3">   
+                        <button class="click" id="startdatebtn">Start Date</button>
+                    </div>
+                    <div class="col-md-3">   
+                        <button class="click" id="enddatebtn">End Date</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-3">
+                        <button class="click" method="get" onClick="location.href='/home' ">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -5,6 +5,9 @@
         <link type="text/css" href="/stylesheets/createevents.css" rel="stylesheet"/> <!-- CSS program -->
         <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> <!-- Load jQuery -->
 		<script type="text/javascript" src="static/createevents.js"></script> <!-- JavaScript program -->
+        <!-- Datepicker from Zebra_datepicker -->
+        <script type="text/javascript" src="static/zebra_datepicker.js"></script>
+        <link rel="stylesheet" href="/stylesheets/zebra_datepicker.css" type="text/css">
         <title>Create Events</title>
     </head>
     <body class = "body">
@@ -13,44 +16,79 @@
                 <h1>Create Events</h1>
             </div>
             <div class = "event">
-                <div class="row">
-                    <div class ="col-md-2">
-                        <h3> Who to invite: </h3>
+                <form action="/processevent"> 
+                <!--All buttons within this form must be button type="button" or others, CANNOT BE blank or "submit"
+                as this will redirect straight to /processevent upon clicking that button-->
+                    <div class="row">
+                        <div class ="col-md-2">
+                            <h3> Who to invite: </h3>
+                        </div>
+                        <div class="col-md-4">
+                            <textarea readonly name="invite" id="invite" style="width:380px; height 60px;">No friends</textarea>
+                        </div>
+                        <div class="col-md-3">   
+                            <button type="button" class="click" id="friendbtn">Friend List</button>
+                            <ul class="friendmenu" id="friendmenu">
+                                {% for pengyou in friendlist: %}
+                                    <li class="friend"><a href="#">{{pengyou}}</a><img src="static/tick.png"></img></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <textarea disabled name="invite" id="invite" style="width:380px; height 60px;">No friends</textarea>
+                    <div class="row">
+                        <div class ="col-md-2">
+                            <h3> Specify date range: </h3>
+                        </div>
+                        <div class="col-md-1">
+                            <h4>Start Date:</h4>
+                        </div>
+                        <div class="col-md-2">
+                            <input name="datestart" class="datepicker-start" type="text">
+                        </div>
+                        <div class="col-md-1">   
+                            <h4>End Date:</h4>
+                        </div>
+                        <div class="col-md-2">
+                            <input name="dateend" class="datepicker-end" type="text">
+                        </div>
                     </div>
-                    <div class="col-md-3">   
-                        <button class="click" id="friendbtn">Friend List</button>
-                        <ul class="friendmenu" id="friendmenu">
-                            {% for pengyou in friendlist: %}
-                                <li class="friend"><a href="#">{{pengyou}}</a><img src="static/tick.png"></img></li>
-                            {% endfor %}
-                        </ul>
+                    <div class="row">
+                        <div class ="col-md-2">
+                            <h3> Event Name: </h3>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" name="eventname" style="width:380px;margin-top: 12px;">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class ="col-md-2">
+                            <h3> Event Location: </h3>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" name="eventloc" style="width:380px;margin-top: 12px;">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <h3> Event description: 
+                            <br>(optional)</h3>
+                        </div>
+                        <div class="col-md-4">
+                            <textarea name="descr" style="width:380px; height 100px;margin-top: 10px;"></textarea>
+                        </div>
+                    </div>
+                    <p><div class="row">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="click">Create Event</button>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="click" method="get" onClick="location.href='/home' ">Cancel</button>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class ="col-md-2">
-                        <h3> Specify date range: </h3>
-                    </div>
-                    <div class="col-md-4">
-                        <textarea disabled name="daterange" id="daterange" style="width:380px; height 60px;"></textarea>
-                    </div>
-                    <div class="col-md-3">   
-                        <button class="click" id="startdatebtn">Start Date</button>
-                    </div>
-                    <div class="col-md-3">   
-                        <button class="click" id="enddatebtn">End Date</button>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-2">
-                    </div>
-                    <div class="col-md-3">
-                        <button class="click" method="get" onClick="location.href='/home' ">Cancel</button>
-                    </div>
-                </div>
-            </div>
+            </form>
         </div>
     </body>
 </html>

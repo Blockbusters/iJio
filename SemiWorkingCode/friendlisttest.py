@@ -12,6 +12,10 @@ from google.appengine.ext import ndb
 jinja_environment = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__) + "/templates"))
 
+class Counter(ndb.Model):
+    created = ndb.BooleanProperty()
+    count = ndb.IntegerProperty(indexed=False)
+
 class UTC0800(datetime.tzinfo):
     """tzinfo derived concrete class named "+0800" with offset of 28800"""
     # can be configured here
@@ -288,7 +292,17 @@ class ProcessEvent(webapp2.RequestHandler):
         description = self.request.get('descr')
         self.response.write("Invited Users: " + temp + "<p>" + "Date Range: " + start + " to " + end)
         self.response.write("<p>Event: " + eventname + " @ " + eventloc + "<p>")
-        self.response.write("Description of event: " + description)
+        self.response.write("Description of event: " + description + "<p>")
+        qryCounter = Counter.query(Counter.created == True)
+        if qryCounter.count() == 0:
+            counter = Counter(created = True, count = 1)
+            counter.put()
+            time.sleep(1)
+            qryCounter = Counter.query(Counter.created == True)
+        else:
+            qryCounter.get().count += 1
+            qryCounter.get().put()
+        self.response.write("Counter: " + str(qryCounter.get().count))
         
 app = webapp2.WSGIApplication([
     ('/', MainPage),

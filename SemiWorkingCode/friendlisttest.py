@@ -241,36 +241,36 @@ class ManageTimetable(webapp2.RequestHandler):
         now = datetime.datetime.now(tz)
         monthStr = now.strftime("%B")
         month = now.month
-        #self.response.write("Today is " + str(now.day) + "-" + str(now.month) + "-" + str(now.year))
-        #self.response.write("<p> The time is now " + str(now.hour) + ":" + str(now.minute))
-        self.response.write(monthStr)
-        self.response.write("<br>")
         userMonth = []
         userMonthObj = qrySelf.calendar[month - 1]
-        userMonth.append(userMonthObj.w1)
-        userMonth.append(userMonthObj.w2)
-        userMonth.append(userMonthObj.w3)
-        userMonth.append(userMonthObj.w4)
-        counter = 0
-        self.response.write("<form action=\"/updatetime\" method=\"GET\">")
-        for i in userMonth:
-            for bit in str(bin(i)[2:]):
-                if counter % 4 == 0:
-                    day = counter / 4 + 1
-                    self.response.write("<br>Day ")
-                    self.response.write(day)
-                if bit == 0:
-                    self.response.write("<input type=\"checkbox\" name = \"Free\" id = \"{id}\" checked=\"checked\"></input>".format(id = counter))
-                else:
-                    self.response.write("<input type=\"checkbox\" \"hi\"></input>")
-                counter += 1
-        self.response.write("<br><input type = \"submit\"></input>")
-        self.response.write("</form>")
+        #check types here eventually
+        userMonth.append(str(bin(userMonthObj.w1)[2:]))
+        userMonth.append(str(bin(userMonthObj.w2)[2:]))
+        userMonth.append(str(bin(userMonthObj.w3)[2:]))
+        userMonth.append(str(bin(userMonthObj.w4)[2:]))
+        template = jinja_environment.get_template('timetable.html')
+        self.response.out.write(template.render({"monthStr": monthStr, "userMonth": userMonth, "monthNum": month}))
 
 class UpdateTime(webapp2.RequestHandler):
-    def get(self):
-        self.response.write("HI")
-
+    def post(self):
+        user = users.get_current_user()
+        qrySelf = User.query(User.email == user.email()).get()
+        w1 = ""
+        for i in range(32):
+            checked = self.request.get(str(i))
+            if (checked == "on"):
+                w1 += "0"
+            else:
+                w1 += "1"
+        month = int(self.request.get("month"))
+        userMonthObj = qrySelf.calendar[month - 1]
+        userMonthObj.w1 = int(w1, 2)
+        self.response.write(w1)
+        self.response.write("<br>")
+        self.response.write("<br>")
+        self.response.write(bin(userMonthObj.w1))
+        #qrySelf.put()
+        #self.redirect("/managetimetable")
 
 class CreateEvents(webapp2.RequestHandler):
     def get(self):
@@ -294,6 +294,7 @@ class ProcessEvent(webapp2.RequestHandler):
         self.response.write("<p>Event: " + eventname + " @ " + eventloc + "<p>")
         self.response.write("Description of event: " + description + "<p>")
         qryCounter = Counter.query(Counter.created == True)
+        # we can manually init counter then delete this code? i suppose?
         if qryCounter.count() == 0:
             counter = Counter(created = True, count = 1)
             counter.put()
@@ -322,6 +323,7 @@ app = webapp2.WSGIApplication([
     ('/createevents', CreateEvents),
     ('/processevent', ProcessEvent),
 ], debug=True)
+
 
 #TODO: DECIDE ON CALENDAR STRUCTURE
 '''

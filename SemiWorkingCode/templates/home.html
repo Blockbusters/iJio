@@ -18,24 +18,34 @@
                     </form>
                 </div>
                 <div class="col-md-3">
-                    <form action="/managetimetable">
+                    <!--ATTN NICKY! changed this to a href to add in the month not sure if it affects anything-->
+                    <a href="/managetimetable?month={{month}}">
                         <input type="submit" value="Manage Timetable">
-                    </form>
+                    </a>
                 </div>
             </div>
             <div class = "row">
                 <div class="col-md-3">
                 </div>
                 <div class="col-md-3">
+                    <form action="/createevents">
+                        <input type="submit" value="Create Events">
+                    </form>  
+                </div>           
+                <div class="col-md-3">
+                    <form action="/checkevents">
+                        <input type="submit" value="Check Events"></input>
+                    </form>  
+                </div>
+            </div>
+            <div class = "row">
+                <div class="col-md-6">
+                </div>
+                <div class="col-md-3">
                     <form action="/logout">
                         <input type="submit" value="Logout">
                     </form>  
                 </div>           
-                <div class="col-md-3">
-                    <form action="/createevents">
-                        <input type="submit" value="Create Events">
-                    </form>  
-                </div>
             </div>
         </div>
     </body>

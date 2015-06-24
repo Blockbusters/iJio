@@ -29,9 +29,10 @@ class UTC0800(datetime.tzinfo):
     def tzname(self, dt):
         return self.__class__._name
 tz = UTC0800()
-       
+monthNow = datetime.datetime.now(tz).strftime("%m")
+    
 class Month(ndb.Model):
-    year = ndb.IntegerProperty(indexed=False)
+    #year = ndb.IntegerProperty(indexed=False) to be implemented someday
     month = ndb.IntegerProperty(indexed=False)
     # 0 means busy, 1 is free.
     w1 = ndb.IntegerProperty(indexed=False) # stores 32 bits: (Morn/Aft/Eve/Night)
@@ -43,10 +44,11 @@ class User(ndb.Model):
     name = ndb.StringProperty()
     email = ndb.StringProperty()
     friendList = ndb.StringProperty(repeated=True, indexed=False) # list of user id
-    eventList = ndb.IntegerProperty(repeated=True, indexed=False) # list of event id
     friendRequestList = ndb.StringProperty(repeated=True, indexed=False) # list of user id incoming friends requests
     friendRequestingList = ndb.StringProperty(repeated=True, indexed=False) # list of user id outgoing friend requests
     calendar = ndb.StructuredProperty(Month, repeated = True) # Personal Calendar of months
+    eventList = ndb.IntegerProperty(repeated=True, indexed=False) # list of event id
+    eventAcceptedList = ndb.IntegerProperty(repeated=True, indexed=False) # list of event ids accepted (and not over if possible)
 
 class Event(ndb.Model):
     eventID = ndb.IntegerProperty() #query count to associate ID
@@ -63,9 +65,13 @@ class Event(ndb.Model):
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
+        qryCounter = Counter.query(Counter.created == True)
+        if qryCounter.count() == 0:
+            counter = Counter(created = True, count = 1)
+            counter.put()
+            qryCounter = Counter.query(Counter.created == True)
         self.redirect("/login")
-
-#TODO: eventually shift to their individual html files to pretty up.        
+       
 LOGOUT_OPTION = """\
 	<form action="/logout">
         <input type="submit" value="Logout">
@@ -112,7 +118,7 @@ class Register(webapp2.RequestHandler):
                 tcalendar.append(tmonth)
             temp = user.email()
             newuser = User(name = temp.title(), email = temp.lower(), friendList = [], eventList = [], calendar = tcalendar)
-            userkey = newuser.put()
+            newuser.put()
             template = jinja_environment.get_template('register.html')
             self.response.out.write(template.render())
 			
@@ -127,7 +133,7 @@ class HomePage(webapp2.RequestHandler):
         name = qry.get().name
         numFriends = str(len(qry.get().friendRequestList))
         template = jinja_environment.get_template('home.html')
-        self.response.out.write(template.render({"name":name,"counter":numFriends}))
+        self.response.out.write(template.render({"name":name,"counter":numFriends, "month":monthNow}))
 		
 #TODO: Is it possible to shove all login required functionality into one python file where we can declare global user and qry?
 #NOTE: sanitize inputs: ensure all names are in Proper Form and all emails are in lowercase.
@@ -238,73 +244,110 @@ class ManageTimetable(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qrySelf = User.query(User.email == user.email()).get()
-        now = datetime.datetime.now(tz)
-        monthStr = now.strftime("%B")
-        month = now.month
+        month = int(self.request.get("month"))
+        monthStr = datetime.date(2015, month, 1).strftime('%B')
         userMonth = []
         userMonthObj = qrySelf.calendar[month - 1]
-        #check types here eventually
+        #should be settled
         userMonth.append(str(bin(userMonthObj.w1)[2:]))
         userMonth.append(str(bin(userMonthObj.w2)[2:]))
         userMonth.append(str(bin(userMonthObj.w3)[2:]))
         userMonth.append(str(bin(userMonthObj.w4)[2:]))
         template = jinja_environment.get_template('timetable.html')
         self.response.out.write(template.render({"monthStr": monthStr, "userMonth": userMonth, "monthNum": month}))
-
+        self.response.write(BACKHOME)
+        
 class UpdateTime(webapp2.RequestHandler):
     def post(self):
         user = users.get_current_user()
         qrySelf = User.query(User.email == user.email()).get()
-        w1 = ""
-        for i in range(32):
+        w1 = "0b1"
+        w2 = "0b1"
+        w3 = "0b1"
+        w4 = "0b1"
+        for i in range(1, 32):
             checked = self.request.get(str(i))
             if (checked == "on"):
                 w1 += "0"
             else:
                 w1 += "1"
+        for i in range(32, 63):
+            checked = self.request.get(str(i))
+            if (checked == "on"):
+                w2 += "0"
+            else:
+                w2 += "1"
+        for i in range(63, 94):
+            checked = self.request.get(str(i))
+            if (checked == "on"):
+                w3 += "0"
+            else:
+                w3 += "1"
+        for i in range(94, 125):
+            checked = self.request.get(str(i))
+            if (checked == "on"):
+                w4 += "0"
+            else:
+                w4 += "1"
         month = int(self.request.get("month"))
         userMonthObj = qrySelf.calendar[month - 1]
         userMonthObj.w1 = int(w1, 2)
-        self.response.write(w1)
-        self.response.write("<br>")
-        self.response.write("<br>")
-        self.response.write(bin(userMonthObj.w1))
-        #qrySelf.put()
-        #self.redirect("/managetimetable")
-
+        userMonthObj.w2 = int(w2, 2)
+        userMonthObj.w3 = int(w3, 2)
+        userMonthObj.w4 = int(w4, 2)
+        qrySelf.put()
+        time.sleep(0.5)
+        self.redirect("/managetimetable?month={month}".format(month = month))
+#TODO: input validation should occur here
 class CreateEvents(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qrySelf = User.query(User.email == user.email()).get()
         namelist = qrySelf.friendList
+        friendList = []
+        for friend in namelist:
+            qryFriend = User.query(User.email == friend).get()
+            friendList.append([qryFriend.name, friend])
         template = jinja_environment.get_template('createevents.html')
-        self.response.out.write(template.render({"friendlist":namelist}))
-
+        self.response.out.write(template.render({"friendlist":friendList}))
+        
 class ProcessEvent(webapp2.RequestHandler):
     def get(self):
-        # This is a TEMP filler to show how to retrieve data from the Create Events Page.
-        # Remember: Check if any inputs is empty and display error message.
-        temp = self.request.get('invite')
+        user = users.get_current_user()
+        invite = self.request.get('invite')
         start = self.request.get('datestart')
         end = self.request.get('dateend')
+        start2 = start[0:2] + start[3:5] + start[6:]
+        end2 = end[0:2] + end[3:5] + end[6:]
         eventname = self.request.get('eventname')
         eventloc = self.request.get('eventloc')
         description = self.request.get('descr')
-        self.response.write("Invited Users: " + temp + "<p>" + "Date Range: " + start + " to " + end)
-        self.response.write("<p>Event: " + eventname + " @ " + eventloc + "<p>")
-        self.response.write("Description of event: " + description + "<p>")
-        qryCounter = Counter.query(Counter.created == True)
-        # we can manually init counter then delete this code? i suppose?
-        if qryCounter.count() == 0:
-            counter = Counter(created = True, count = 1)
-            counter.put()
-            time.sleep(1)
-            qryCounter = Counter.query(Counter.created == True)
-        else:
-            qryCounter.get().count += 1
-            qryCounter.get().put()
-        self.response.write("Counter: " + str(qryCounter.get().count))
+        qryCounter = Counter.query(Counter.created == True).get()
+        invited = []
+        self.response.write(invite)
+        for i in invite:
+            #invite is a string
+            invited.append(i)
+        #event = Event(eventID = qryCounter.count, invitedUsers = invited, acceptedUsers = [user.email()], 
+        #              name = eventname, location = eventloc, description = description, dateRange = [int(start2), int(end2)])
+        #event.put()
+        qryCounter.count += 1
+        qryCounter.put()
         
+        template = jinja_environment.get_template('processevent.html')
+        self.response.out.write(template.render({"eventname": eventname, "eventloc": eventloc , "invited": invite , "startdate": start , "enddate": end , "description": description}))
+        self.response.write(BACKHOME)
+        
+class CheckEvent(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        qrySelf = User.query(User.email == user.email()).get()
+        AllEvents = qrySelf.eventList
+        AcceptedEvents = qrySelf.eventAcceptedList
+        template = jinja_environment.get_template('checkevents.html')
+        self.response.out.write(template.render())
+        self.response.write(BACKHOME)
+ 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/login', LoginPage),
@@ -322,15 +365,5 @@ app = webapp2.WSGIApplication([
     ('/updatetime', UpdateTime),
     ('/createevents', CreateEvents),
     ('/processevent', ProcessEvent),
+    ('/checkevents', CheckEvent),
 ], debug=True)
-
-
-#TODO: DECIDE ON CALENDAR STRUCTURE
-'''
-    class Activity(ndb.Model):
-    date = ndb.DateProperty()
-    time = ndb.StringProperty()  
-    availability = ndb.BooleanProperty() # true = occupied, false = free
-    
-class BitCalendar(ndb.Model):
-'''

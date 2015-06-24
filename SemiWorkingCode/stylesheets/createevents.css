@@ -67,3 +67,8 @@
 .datepicker-start, .datepicker-end{
     margin-top: 10px;
 }
+
+.invisible{
+    resize: none;
+    visibility:hidden;
+}

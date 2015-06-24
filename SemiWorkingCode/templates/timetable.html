@@ -1,0 +1,31 @@
+<DOCTYPE html>
+<html>
+    <head>
+    <title>Butt's {{monthStr}}</title>
+    <link type="text/css" href="/stylesheets/timetable.css" rel="stylesheet"/> <!-- CSS program -->
+    <script type = "text/javascript" src = "static/updatetime.js"></script>
+    </head>
+    <body class = 'bg'>
+        <div class = "bigName">
+            {{monthStr}}
+        </div>
+        <br>
+        {% if monthNum == 1: %} 
+            <a href = "/managetimetable?month=12"><button disabled class="disabled">We regret to inform you that 2014 has not been implemented</button></a>
+            <a href = "/managetimetable?month={{monthNum + 1}}"><button>Next Month</button></a>
+        {% elif monthNum < 12: %} 
+            <a href = "/managetimetable?month={{monthNum - 1}}"><button>Previous Month</button></a>
+            <a href = "/managetimetable?month={{monthNum + 1}}"><button>Next Month</button></a>
+        {% elif monthNum == 12: %}
+            <a href = "/managetimetable?month={{monthNum - 1}}"><button>Previous Month</button></a>
+            <a href = "/managetimetable?month=1"><button disabled class="disabled">We regret to inform you that 2016 has not been implemented</button></a>
+        {% endif %}
+        <div = "Timetable">
+        Print day names/whatever if have time and energy
+        <form action = "/updatetime?month={{monthNum}}" method = "POST">
+            <script>printTimetable({{userMonth}});</script>
+            <p><input type = "submit"></input>
+        </form>
+
+    </body>
+</html>

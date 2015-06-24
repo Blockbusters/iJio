@@ -14,19 +14,27 @@ var main = function(){
     $('.friend').on('click', function(){
         var temp = $(this).find('img');
         var name = $(this).text();
+        var id = this.id;
         var textbox = $('#invite');
+        var invisbox = $('#hiddeninvite');
         // Remove Friend
         if (temp.css('visibility')=='visible'){
             temp.css('visibility','hidden');
-            $(this).removeClass('added'); 
+            $(this).removeClass('added');
             var newbox = "";
+            var newinvisbox = "";
             $('.added').each(function(index){
-               newbox = newbox + "," + $(this).text(); 
+               var thisId = this.id;
+               //consider using str.replace
+               newbox = newbox + ", " + $(this).text(); 
+               newinvisbox = newinvisbox + ", " + thisId; 
             });
             if (newbox.charAt(0) == ','){
-                newbox = newbox.substring(1);
+                newbox = newbox.substring(2);
+                newinvisbox = newinvisbox.substring(2)
             }
             textbox.val(newbox);
+            invisbox.val(newinvisbox);
             if (textbox.val() == ""){
                 textbox.val("No friends");
             }
@@ -37,9 +45,11 @@ var main = function(){
             $(this).addClass('added');          
             if (textbox.val() == "No friends"){
                 textbox.val(name);
+                invisbox.val(id);
             }
             else{
-                textbox.val(textbox.val() + "," + name);
+                textbox.val(textbox.val() + ", " + name);
+                invisbox.val(invisbox.val() + ", " + id);
             }
         }
     }); 

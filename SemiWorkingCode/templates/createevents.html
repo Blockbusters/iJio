@@ -30,7 +30,7 @@
                             <button type="button" class="click" id="friendbtn">Friend List</button>
                             <ul class="friendmenu" id="friendmenu">
                                 {% for pengyou in friendlist: %}
-                                    <li class="friend"><a href="#">{{pengyou}}</a><img src="static/tick.png"></img></li>
+                                    <li class="friend"><a href="#">{{pengyou[0]}}</a><img src="static/tick.png"></img></li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -81,7 +81,7 @@
                         <div class="col-md-2">
                         </div>
                         <div class="col-md-3">
-                            <button type="submit" class="click">Create Event</button>
+                            <button type="submit" class="click" method="get">Create Event</button>
                         </div>
                         <div class="col-md-3">
                             <button type="button" class="click" method="get" onClick="location.href='/home' ">Cancel</button>

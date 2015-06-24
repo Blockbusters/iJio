@@ -11,3 +11,7 @@ input[type=submit]{
     margin-bottom: 25px;
     /*border: 0 none;*/  /*Only enable this if dont want the border*/
 }
+
+.pleaseremovethis{
+    visibility: hidden;
+}

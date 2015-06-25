@@ -170,17 +170,19 @@ class ViewRequests(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qrySelf = User.query(User.email == user.email())
-        if len(qrySelf.get().friendRequestList) == 0:
-            self.response.write("You have no friend requests.<p>")            
-        else:
-            self.response.write("Friend Requests: <p>")
-            for friend in qrySelf.get().friendRequestList:
+        numRequests = len(qrySelf.get().friendRequestList)
+        requestList = []
+        index = False
+        for friend in qrySelf.get().friendRequestList:
                 qryFriend = User.query(User.email == friend)
-                self.response.write("Name: " + qryFriend.get().name)
-                self.response.write("<br>Email: " + qryFriend.get().email)
-                self.response.write("<button method=\"get\" onClick=\"location.href='/acceptFriend?value={email}'\">Accept Friend</button>".format(email = friend))
-                self.response.write(NEWLINE)
-        self.response.write(BACKHOME)
+                friendObj = []
+                friendObj.append("Name: " + qryFriend.get().name + "<br>Email: " + qryFriend.get().email) #Stores text to print
+                friendObj.append(friend) #Stores email so as to make use in html code
+                friendObj.append(index)
+                requestList.append(friendObj)
+                index = not index
+        template = jinja_environment.get_template('viewrequests.html')
+        self.response.out.write(template.render({"counter" : numRequests, "requestList" : requestList}))
         
 class AcceptFriend(webapp2.RequestHandler):
     def get(self):

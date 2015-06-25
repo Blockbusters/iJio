@@ -3,24 +3,16 @@
     <head>
         <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
         <link type="text/css" href="/stylesheets/timetable.css" rel="stylesheet"/> <!-- CSS program -->
+        <title>{{e[2]}}</title>
         <script type = "text/javascript" src = "static/printer.js"></script>
-        <title>Check Events</title>
     </head>
     <body class = 'bg'>
-        <div class = "bigName">
-            <p>Invited to:
+        <div class = "container">
+            <div class = "bigName">
+                {{e[2]}}
+            </div>
+            <div class = "words">
+                <script>printE({{e}});</script>
+            </div>
         </div>
-        <div class = "schedule">
-            <p><script>printEvents({{eLst}});</script>
-        </div>
-        <div class = "bigName">
-            <p>Accepted:
-        </div>
-        <div class = "schedule">
-            <p>
-            <script>
-                printEvents({{aeLst}});
-            </script>
-        </div>
-        <p>
     </body>

@@ -5,6 +5,7 @@ import jinja2
 import os
 import time
 import datetime
+import json
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
@@ -16,6 +17,7 @@ class Counter(ndb.Model):
     created = ndb.BooleanProperty()
     count = ndb.IntegerProperty(indexed=False)
 
+#Time Stuff
 class UTC0800(datetime.tzinfo):
     """tzinfo derived concrete class named "+0800" with offset of 28800"""
     # can be configured here
@@ -35,7 +37,7 @@ class Month(ndb.Model):
     #year = ndb.IntegerProperty(indexed=False) to be implemented someday
     month = ndb.IntegerProperty(indexed=False)
     # 0 means busy, 1 is free.
-    w1 = ndb.IntegerProperty(indexed=False) # stores 32 bits: (Morn/Aft/Eve/Night)
+    w1 = ndb.IntegerProperty(indexed=False) # stores 31 bits: MSB + (Morn/Aft/Eve/Night) 
     w2 = ndb.IntegerProperty(indexed=False)
     w3 = ndb.IntegerProperty(indexed=False)
     w4 = ndb.IntegerProperty(indexed=False)
@@ -52,7 +54,7 @@ class User(ndb.Model):
 
 class Event(ndb.Model):
     eventID = ndb.IntegerProperty() #query count to associate ID
-    #datetime = ndb.ComputedProperty()
+    datetime = ndb.IntegerProperty()
     invitedUsers = ndb.StringProperty(repeated=True, indexed=False)
     acceptedUsers = ndb.StringProperty(repeated=True, indexed=False)
     rejectedUsers = ndb.StringProperty(repeated=True, indexed=False)
@@ -78,7 +80,7 @@ LOGOUT_OPTION = """\
 	</form>
 """
 NEWLINE = """\
-<p></p>
+<p>
 """
 BACKHOME = """\
     <button method="get" onClick="location.href='/home' ">Back to Home Page</button>
@@ -105,6 +107,8 @@ class LoginPage(webapp2.RequestHandler):
 		# Request for login
             self.redirect(users.create_login_url(self.request.uri))
 
+#TODO: Ensure name is not blank
+#TODO: add year to months and calendar
 class Register(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
@@ -126,6 +130,7 @@ class LogOut(webapp2.RequestHandler):
 	def get(self):
 		self.redirect(users.create_logout_url('/'))
 
+#TODO: add num of pending event requests
 class HomePage(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
@@ -136,8 +141,6 @@ class HomePage(webapp2.RequestHandler):
         self.response.out.write(template.render({"name":name,"counter":numFriends, "month":monthNow}))
 		
 #TODO: Is it possible to shove all login required functionality into one python file where we can declare global user and qry?
-#NOTE: sanitize inputs: ensure all names are in Proper Form and all emails are in lowercase.
-#TODO: how to ensure name is not blank? my if blocks seem to crash the program lol
 		
 class Update(webapp2.RequestHandler):
 	def get(self):
@@ -162,13 +165,13 @@ class ManageFriends(webapp2.RequestHandler):
         template = jinja_environment.get_template('friendlist.html')
         self.response.out.write(template.render({"printList" : friendListPrint}))
 
+#TODO: port to html
 class ViewRequests(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qrySelf = User.query(User.email == user.email())
         if len(qrySelf.get().friendRequestList) == 0:
-            self.response.write("You have no friend requests.<p>")
-            self.response.write(BACKHOME)
+            self.response.write("You have no friend requests.<p>")            
         else:
             self.response.write("Friend Requests: <p>")
             for friend in qrySelf.get().friendRequestList:
@@ -177,7 +180,8 @@ class ViewRequests(webapp2.RequestHandler):
                 self.response.write("<br>Email: " + qryFriend.get().email)
                 self.response.write("<button method=\"get\" onClick=\"location.href='/acceptFriend?value={email}'\">Accept Friend</button>".format(email = friend))
                 self.response.write(NEWLINE)
-
+        self.response.write(BACKHOME)
+        
 class AcceptFriend(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
@@ -198,21 +202,6 @@ class Search(webapp2.RequestHandler):
         template = jinja_environment.get_template('search.html')
         self.response.out.write(template.render())
 
-class SearchResults(webapp2.RequestHandler):        
-    def get(self):
-        user = users.get_current_user()
-        qrySelf = User.query(User.email == user.email())
-        name = self.request.get('name').title()
-        qry1 = User.query(User.name == name)
-        numFound1 = qry1.count()
-        pair = []
-        for key in qry1.iter():
-            email = key.email
-            case = checkAdding(email, qrySelf.get())
-            pair.append([key.name, key.email, case])  
-        template = jinja_environment.get_template('searchresults.html')
-        self.response.out.write(template.render({"numFoundName":numFound1,"name":name, "pair":pair})) 
-            
 #check if person has already been added
 def checkAdding(personEmail, user):
     if personEmail == user.email:
@@ -227,6 +216,21 @@ def checkAdding(personEmail, user):
         if personEmail == i:
             return 4
     return False
+
+class SearchResults(webapp2.RequestHandler):        
+    def get(self):
+        user = users.get_current_user()
+        qrySelf = User.query(User.email == user.email())
+        name = self.request.get('name').title()
+        qry1 = User.query(User.name == name)
+        numFound1 = qry1.count()
+        pair = []
+        for key in qry1.iter():
+            email = key.email
+            case = checkAdding(email, qrySelf.get())
+            pair.append([key.name, key.email, case])  
+        template = jinja_environment.get_template('searchresults.html')
+        self.response.out.write(template.render({"numFoundName":numFound1,"name":name, "pair":pair})) 
         
 class AddFriend(webapp2.RequestHandler):
     def get(self):
@@ -240,6 +244,7 @@ class AddFriend(webapp2.RequestHandler):
         qryFriend.get().put()
         self.redirect("/search")
 
+#TODO: print days, and vary num of dates.
 class ManageTimetable(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
@@ -298,7 +303,8 @@ class UpdateTime(webapp2.RequestHandler):
         qrySelf.put()
         time.sleep(0.5)
         self.redirect("/managetimetable?month={month}".format(month = month))
-#TODO: input validation should occur here
+
+#TODO: zebra datepicker how to validate??
 class CreateEvents(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
@@ -312,42 +318,112 @@ class CreateEvents(webapp2.RequestHandler):
         self.response.out.write(template.render({"friendlist":friendList}))
         
 class ProcessEvent(webapp2.RequestHandler):
-    def get(self):
+    def post(self):
+        #Get data
         user = users.get_current_user()
         invite = self.request.get('invite')
+        invited = invite.split(", ")
         start = self.request.get('datestart')
         end = self.request.get('dateend')
+        #dirtyfix:
+        if start == "":
+            start = "01/01/2015"
+        if end == "":
+            end = "31/12/2015"
         start2 = start[0:2] + start[3:5] + start[6:]
         end2 = end[0:2] + end[3:5] + end[6:]
         eventname = self.request.get('eventname')
         eventloc = self.request.get('eventloc')
         description = self.request.get('descr')
+        #Get event ID & update counter
         qryCounter = Counter.query(Counter.created == True).get()
-        invited = []
-        self.response.write(invite)
-        for i in invite:
-            #invite is a string
-            invited.append(i)
-        #event = Event(eventID = qryCounter.count, invitedUsers = invited, acceptedUsers = [user.email()], 
-        #              name = eventname, location = eventloc, description = description, dateRange = [int(start2), int(end2)])
-        #event.put()
+        eventID = qryCounter.count
         qryCounter.count += 1
         qryCounter.put()
-        
+        #Add event ID to invited users lists
+        qrySelf = User.query(User.email == user.email()).get()
+        qrySelf.eventAcceptedList.append(eventID)
+        qrySelf.put()
+        emailinvite = self.request.get('hiddeninvite')
+        emailinvited = emailinvite.split(", ")
+        for email in emailinvited:
+            qryFriend = User.query(User.email == email).get()
+            qryFriend.eventList.append(eventID)
+            qryFriend.put()
+        #Create event
+        event = Event(eventID = eventID, invitedUsers = emailinvited, acceptedUsers = [user.email()], 
+                      name = eventname, location = eventloc, description = description,
+                      dateRange = [int(start2), int(end2)])
+        event.put()
+               
         template = jinja_environment.get_template('processevent.html')
         self.response.out.write(template.render({"eventname": eventname, "eventloc": eventloc , "invited": invite , "startdate": start , "enddate": end , "description": description}))
         self.response.write(BACKHOME)
-        
+
+def listifyEvent(e, abbr):
+    date = e.datetime
+    if date == None:
+        date = "undecided"
+    eventlst = [e.eventID, date, json.dumps(e.name), json.dumps(e.location), json.dumps(e.description), e.dateRange]
+    if (abbr == 1):
+        invited = []
+        accepted = []
+        rejected = []
+        for i in e.invitedUsers:
+            qryUser = User.query(User.email == i).get().name
+            invited.append(json.dumps(qryUser))
+        for i in e.acceptedUsers:
+            qryUser = User.query(User.email == i).get().name
+            accepted.append(json.dumps(qryUser))
+        for i in e.rejectedUsers:
+            qryUser = User.query(User.email == i).get().name
+            rejected.append(json.dumps(qryUser))
+        eventlst.append(invited)
+        eventlst.append(accepted)
+        eventlst.append(rejected)
+    return eventlst
+    
 class CheckEvent(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qrySelf = User.query(User.email == user.email()).get()
-        AllEvents = qrySelf.eventList
-        AcceptedEvents = qrySelf.eventAcceptedList
+        eveLst = qrySelf.eventList
+        aeveLst = qrySelf.eventAcceptedList
+        eventList = []
+        acceptedList = []
+        for i in eveLst:
+            event = Event.query(Event.eventID == i).get()
+            eventList.append(listifyEvent(event, 0))
+        for i in aeveLst:
+            event = Event.query(Event.eventID == i).get()
+            acceptedList.append(listifyEvent(event, 0))
+        if len(eventList) == 0:
+            eventList = 0
+        if len(acceptedList) == 0:
+            acceptedList = 0
         template = jinja_environment.get_template('checkevents.html')
-        self.response.out.write(template.render())
+        self.response.out.write(template.render({"eLst": eventList, "aeLst": acceptedList}))
         self.response.write(BACKHOME)
- 
+
+class EventDetails(webapp2.RequestHandler):
+    def get(self):        
+        user = users.get_current_user()
+        qrySelf = User.query(User.email == user.email()).get()
+        id = int(self.request.get('id'))
+        qryEvent = Event.query(Event.eventID == id).get()
+        event = listifyEvent(qryEvent, 1)
+        #check if user can see this event + user status: 0 - invited 1 - accepted 2 - rejected
+        status = 0
+        if user.email() not in qryEvent.invitedUsers:
+            status = 1
+            if user.email() not in qryEvent.acceptedUsers:
+                status = 2
+                if user.email() not in qryEvent.rejectedUsers:
+                    self.redirect('/nopermission')
+        template = jinja_environment.get_template('eventdetails.html')
+        self.response.out.write(template.render({'e': event, 'status': status}))
+        
+        
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/login', LoginPage),
@@ -366,4 +442,5 @@ app = webapp2.WSGIApplication([
     ('/createevents', CreateEvents),
     ('/processevent', ProcessEvent),
     ('/checkevents', CheckEvent),
+    ('/eventdetails', EventDetails),
 ], debug=True)

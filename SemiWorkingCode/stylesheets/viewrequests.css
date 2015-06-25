@@ -1,0 +1,31 @@
+.bg{
+    background-color: cornflowerblue;
+    text-align: center;
+}
+
+.click{
+    background-color: #47DABD;
+    border-radius: 10px;/*Button Shape*/
+    padding: 15px 10px; /* Area of space (vertical, horizontal)*/
+    width: 280px;
+    color: white;
+    margin-bottom: 25px;
+}
+
+.accFriend{
+    background-color: #47DABD;
+    border-radius: 10px;/*Button Shape*/
+    padding: 15px 10px; /* Area of space (vertical, horizontal)*/
+    width: 140px;
+    color: white;
+    margin-bottom: 25px;
+}
+
+.main h1{
+    font-size: 50px;  
+}
+
+.main h2{
+    font-size: 23px;
+    text-decoration: underline;
+}

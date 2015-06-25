@@ -49,7 +49,7 @@ class User(ndb.Model):
     friendRequestList = ndb.StringProperty(repeated=True, indexed=False) # list of user id incoming friends requests
     friendRequestingList = ndb.StringProperty(repeated=True, indexed=False) # list of user id outgoing friend requests
     calendar = ndb.StructuredProperty(Month, repeated = True) # Personal Calendar of months
-    eventList = ndb.IntegerProperty(repeated=True, indexed=False) # list of event id
+    eventList = ndb.IntegerProperty(repeated=True, indexed=False) # list of event id (not accepted yet)
     eventAcceptedList = ndb.IntegerProperty(repeated=True, indexed=False) # list of event ids accepted (and not over if possible)
 
 class Event(ndb.Model):
@@ -130,15 +130,15 @@ class LogOut(webapp2.RequestHandler):
 	def get(self):
 		self.redirect(users.create_logout_url('/'))
 
-#TODO: add num of pending event requests
 class HomePage(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qry = User.query(User.email == user.email())
         name = qry.get().name
         numFriends = str(len(qry.get().friendRequestList))
+        numEventReq = str(len(qry.get().eventList))
         template = jinja_environment.get_template('home.html')
-        self.response.out.write(template.render({"name":name,"counter":numFriends, "month":monthNow}))
+        self.response.out.write(template.render({"name":name,"counter":numFriends, "month":monthNow, "numEventReq":numEventReq}))
 		
 #TODO: Is it possible to shove all login required functionality into one python file where we can declare global user and qry?
 		

@@ -38,3 +38,12 @@ input[type=submit]{
 .words{
     font-size: 200%;
 }
+
+.schedule{
+    font-size: 200%;
+}
+
+.link {
+    font-size: 80%;
+    color:white;
+}

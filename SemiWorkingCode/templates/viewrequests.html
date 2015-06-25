@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
+        <link type="text/css" href="/stylesheets/viewrequests.css" rel="stylesheet"/> <!-- CSS program -->
+        <title>Friend Requests</title>
+    </head>
+    <body class = 'bg'>
+        <div class = "container">
+            <div class="main">
+                <h1> View Friend Requests</h1>
+                {% if counter == 0: %}
+                    <p>You have no friend requests.</p>
+                {% else: %}
+                    <h2>Friend Requests: </h2>
+                    {% for friend in requestList: %}
+                        {% if friend[2] == False: %}
+                            <div class="row">
+                            <div class="col-md-3">
+                            </div>
+                            <div class="col-md-3">
+                            {{ friend[0] }}
+                            <button class="accFriend" method="get" onClick="location.href='/acceptFriend?value={{friend[1]}}'">Accept Friend</button>
+                            </div>
+                        {% else: %}
+                            <div class="col-md-3">
+                            {{ friend[0] }}
+                            <button class="accFriend" method="get" onClick="location.href='/acceptFriend?value={{friend[1]}}'">Accept Friend</button>
+                            </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <p>
+            <button class="click" method="get" onClick="location.href='/home' ">Back to Home Page</button>
+        </div>
+    </body>
+</html>

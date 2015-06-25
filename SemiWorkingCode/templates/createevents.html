@@ -9,6 +9,15 @@
         <script type="text/javascript" src="static/zebra_datepicker.js"></script>
         <link rel="stylesheet" href="/stylesheets/zebra_datepicker.css" type="text/css">
         <title>Create Events</title>
+        <script>
+            function validateForm() {
+                var x = document.forms["myForm"]["invite"].value;
+                if (x == "No friends") {
+                    alert("Did you forget to jio your friends?");
+                    return false;
+                }
+            }   
+        </script>
     </head>
     <body class = "body">
         <div class="container">
@@ -16,9 +25,12 @@
                 <h1>Create Events</h1>
             </div>
             <div class = "event">
-                <form action="/processevent"> 
+                <form name = "myForm" action="/processevent" onsubmit="return validateForm()" method = "POST"> 
                 <!--All buttons within this form must be button type="button" or others, CANNOT BE blank or "submit"
                 as this will redirect straight to /processevent upon clicking that button-->
+                    <div class = "invisible">
+                        <textarea readonly name="hiddeninvite" id="hiddeninvite" style="width:0px; height: 0px;"></textarea>
+                    </div>
                     <div class="row">
                         <div class ="col-md-2">
                             <h3> Who to invite: </h3>
@@ -30,7 +42,7 @@
                             <button type="button" class="click" id="friendbtn">Friend List</button>
                             <ul class="friendmenu" id="friendmenu">
                                 {% for pengyou in friendlist: %}
-                                    <li class="friend"><a href="#">{{pengyou[0]}}</a><img src="static/tick.png"></img></li>
+                                    <li class="friend" id = {{pengyou[1]}}><a href="#">{{pengyou[0]}}</a><img src="static/tick.png"></img></li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -57,7 +69,7 @@
                             <h3> Event Name: </h3>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" name="eventname" style="width:380px;margin-top: 12px;">
+                            <input type="text" name="eventname" style="width:380px;margin-top: 12px;" required>
                         </div>
                     </div>
                     <div class="row">
@@ -65,7 +77,7 @@
                             <h3> Event Location: </h3>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" name="eventloc" style="width:380px;margin-top: 12px;">
+                            <input type="text" name="eventloc" style="width:380px;margin-top: 12px;" required>
                         </div>
                     </div>
                     <div class="row">
@@ -81,7 +93,7 @@
                         <div class="col-md-2">
                         </div>
                         <div class="col-md-3">
-                            <button type="submit" class="click" method="get">Create Event</button>
+                            <button type="submit" class="click">Create Event</button>
                         </div>
                         <div class="col-md-3">
                             <button type="button" class="click" method="get" onClick="location.href='/home' ">Cancel</button>

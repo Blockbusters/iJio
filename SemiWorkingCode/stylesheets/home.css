@@ -15,3 +15,7 @@ input[type=submit]{
 .pleaseremovethis{
     visibility: hidden;
 }
+
+.request-display a{
+    color: #333;
+}

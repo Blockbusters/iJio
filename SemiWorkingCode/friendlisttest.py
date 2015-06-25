@@ -107,7 +107,7 @@ class LoginPage(webapp2.RequestHandler):
 		# Request for login
             self.redirect(users.create_login_url(self.request.uri))
 
-#TODO: Ensure name is not blank
+
 #TODO: add year to months and calendar
 class Register(webapp2.RequestHandler):
     def get(self):
@@ -143,7 +143,7 @@ class HomePage(webapp2.RequestHandler):
 #TODO: Is it possible to shove all login required functionality into one python file where we can declare global user and qry?
 		
 class Update(webapp2.RequestHandler):
-	def get(self):
+	def post(self):
 		user = users.get_current_user()
 		qry = User.query(User.email == user.email())
 		tempUser = qry.get()

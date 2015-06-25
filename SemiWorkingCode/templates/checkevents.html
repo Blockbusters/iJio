@@ -3,8 +3,24 @@
     <head>
         <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
         <link type="text/css" href="/stylesheets/timetable.css" rel="stylesheet"/> <!-- CSS program -->
+        <script type = "text/javascript" src = "static/printer.js"></script>
         <title>Check Events</title>
     </head>
     <body class = 'bg'>
-        TBC
+        <div class = "bigName">
+            <p>Invited to:
+        </div>
+        <div class = "schedule">
+            <p><script>printEvents({{eLst}});</script>
+        </div>
+        <div class = "bigName">
+            <p>Accepted:
+        </div>
+        <div class = "schedule">
+            <p>
+            <script>
+                printEvents({{aeLst}});
+            </script>
+        </div>
+        <p>
     </body>

@@ -13,7 +13,18 @@
         </div>
         <div class="container">
             <h1> Welcome to iJio, {{name}}</h1>
-            <p>You have {{counter}} friend requests.</p>
+            <div class="request-display">
+                {% if counter == "0": %} <!--NOTE: counter is a string -->
+                    <p>You have no friend requests.</p>
+                {% else: %}
+                    <p><a href="/viewRequest">You have {{counter}} friend requests.</a></p>
+                {% endif %}
+                {% if numEventReq == "0": %}
+                    <p>You have no event requests.</p>
+                {% else: %}
+                    <p><a href="/checkevents">You have {{numEventReq}} event requests.</a></p>
+                {% endif %}
+            </div>
             <div class="row">
                 <div class="col-md-3">
                 </div>

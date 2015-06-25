@@ -4,6 +4,15 @@
         <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
         <link type="text/css" href="/stylesheets/register.css" rel="stylesheet"/> <!-- CSS program -->
         <title>Register</title>
+        <script>
+            function validateForm() {
+                var x = document.forms["nameForm"]["content"].value;
+                if (x.trim() == "") {
+                    alert("Your name cannot be blank!");
+                    return false;
+                }
+            }   
+        </script>
     </head>
     <body class = "body">
         <div class = "message">
@@ -13,7 +22,7 @@
             <p>What is your name?
         </div>
         <div class = "input">
-            <form action ="/update">
+            <form name="nameForm" action ="/update" onsubmit = "return validateForm()" method="POST">
                 <textarea name="content">Firstname Lastname</textarea>
                 <p>
                 <input type="submit" value="Submit Name">

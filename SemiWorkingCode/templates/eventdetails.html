@@ -12,7 +12,18 @@
                 {{e[2]}}
             </div>
             <div class = "words">
-                <script>printE({{e}});</script>
+                <script>printE({{e}}, {{status}});</script>
+            </div>
+            <div class = "row">
+                <div class="col-md-3"></div>
+                <div class="col-md-3">
+                    <button method="get" onClick="location.href='/checkevents' ">Back to Events</button>
+                </div>
+                <div class="col-md-3">
+                    <button method="get" onClick="location.href='/home' ">Back to Home Page</button>
+                <div>
             </div>
         </div>
+        
     </body>
+</html>

@@ -45,6 +45,23 @@ function printEvent(lstEvent) {
     document.write('><sub> View Details</sub></a>');
 }
 
+function stringifyTime(num) {
+    if (num == "undecided") {
+        return "undecided";
+    }
+    time = num % 10
+    if (time == 0) {
+        t =  "Morning";
+    } else if (time == 1) {
+        t = "Afternoon";
+    } else if (time == 2) {
+        t = "Evening";
+    } else {
+        t = "Night";
+    }
+    num = num.toString();
+    return num.substring(0, 2) + "/" + num.substring(2, 4) + ", " + t;
+}
 function printE(lstEvent, status) {
     document.write('<div class="row"><div class="col-md-6">');
     document.write('Location: </div><div class="col-md-6">');
@@ -75,14 +92,13 @@ function printE(lstEvent, status) {
     
     document.write('<div class="row"><div class="col-md-6">');
     document.write('Date: </div><div class="col-md-6">');
-    document.write(lstEvent[1]);
+    document.write(stringifyTime(lstEvent[1]));
     document.write(' <a id = "best" href = /bestday?id=');
     document.write(lstEvent[0]);
     if (lstEvent[1] == "undecided") {
         document.write('>Get best date</a>');
         
     } else {
-        document.write();
         document.write('>Recalculate</a>');
     }
     document.write('</div></div>');

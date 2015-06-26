@@ -173,8 +173,7 @@ class ManageFriends(webapp2.RequestHandler):
             count += 1
         template = jinja_environment.get_template('friendlist.html')
         self.response.out.write(template.render({"printList" : friendListPrint}))
-#is there a bug here?, friend requests stay after accepting sometimes?
-#cant seem to replicate tho...
+
 class ViewRequests(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
@@ -205,7 +204,7 @@ class AcceptFriend(webapp2.RequestHandler):
         qryFriend.get().friendList.append(user.email())
         qrySelf.get().put()
         qryFriend.get().put()
-        time.sleep(1)
+        time.sleep(0.2)
         self.redirect("/viewRequest")
        
 class Search(webapp2.RequestHandler):

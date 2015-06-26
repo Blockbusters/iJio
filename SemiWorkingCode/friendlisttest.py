@@ -314,7 +314,6 @@ class UpdateTime(webapp2.RequestHandler):
         time.sleep(0.5)
         self.redirect("/managetimetable?month={month}".format(month = month))
 
-#TODO: zebra datepicker how to validate??
 class CreateEvents(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()

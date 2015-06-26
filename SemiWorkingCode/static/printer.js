@@ -45,16 +45,17 @@ function printEvent(lstEvent) {
     document.write('><sub> View Details</sub></a>');
 }
 
-function printE(lstEvent) {
+function printE(lstEvent, status) {
     document.write('<div class="row"><div class="col-md-6">');
     document.write('Location: </div><div class="col-md-6">');
     document.write(lstEvent[3]);
     document.write('</div></div>');
     
     document.write('<div class="row"><div class="col-md-6">');
-    document.write('Date: </div><div class="col-md-6">');
-    document.write('TODO: date if chosen, data range if not');
-    document.write(lstEvent[1]);
+    document.write('Date Range: </div><div class="col-md-6">');
+    var start = lstEvent[5][0].replace('\\"',"");
+    var end = lstEvent[5][1].replace('\\"',"");
+    document.write(start + " to " + end);
     document.write('</div></div>');
     
     document.write('<div class="row"><div class="col-md-6">');
@@ -71,4 +72,42 @@ function printE(lstEvent) {
     document.write('Invited: </div><div class="col-md-6">');
     document.write(lstEvent[6]);
     document.write('</div></div>');
+    
+    document.write('<div class="row"><div class="col-md-6">');
+    document.write('Date: </div><div class="col-md-6">');
+    document.write(lstEvent[1]);
+    document.write(' <a id = "best" href = /bestday?id=');
+    document.write(lstEvent[0]);
+    if (lstEvent[1] == "undecided") {
+        document.write('>Get best date</a>');
+        
+    } else {
+        document.write();
+        document.write('>Recalculate</a>');
+    }
+    document.write('</div></div>');
+    
+    document.write('<div class="row"><div class="col-md-3"></div>');
+    document.write('<div class="col-md-3"><button id = "attend" onClick = \'location.href="/attendevent?action=yes&id=');
+    document.write(lstEvent[0]);
+    document.write('"\'>Attend</button></div>');
+    document.write('<div class="col-md-3"><button id = "reject" onClick = \'location.href="/attendevent?action=no&id=');
+    document.write(lstEvent[0]);
+    document.write('"\'>Reject</button></div>');
+    document.write('</div>');
+    
+    //disable buttons based on status: 0 - invited 1 - accepted 2 - rejected
+    if (status == 1) {
+        var button = document.getElementById("attend")
+        button.className += "disabled";
+        button.disabled = true;
+    }
+    if (status == 2) {
+        var button = document.getElementById("reject")
+        button.className += "disabled";
+        button.disabled = true;
+        var link = document.getElementById("best")
+        link.href= "#";
+    }
+    
 }

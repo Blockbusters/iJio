@@ -32,8 +32,9 @@ class UTC0800(datetime.tzinfo):
         return self.__class__._name
 tz = UTC0800()
 monthNow = datetime.datetime.now(tz).strftime("%m")
-dateNow = datetime.datetime.now(tz).strftime("%d/%m/%Y")
-dateTwoWeeks = (datetime.datetime.now(tz) + datetime.timedelta(days = 14)).strftime("%d/%m/%Y")
+# These variables are not used currently.
+#dateNow = datetime.datetime.now(tz).strftime("%d/%m/%Y")
+#dateTwoWeeks = (datetime.datetime.now(tz) + datetime.timedelta(days = 14)).strftime("%d/%m/%Y")
     
 class Month(ndb.Model):
     #year = ndb.IntegerProperty(indexed=False) to be implemented someday
@@ -335,11 +336,6 @@ class ProcessEvent(webapp2.RequestHandler):
         invited = invite.split(", ")
         start = self.request.get('datestart')
         end = self.request.get('dateend')
-        #dirtyfix:
-        if start == "":
-            start = dateNow
-        if end == "":
-            end = dateTwoWeeks
         eventname = self.request.get('eventname')
         eventloc = self.request.get('eventloc')
         description = self.request.get('descr')

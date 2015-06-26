@@ -33,6 +33,7 @@ class UTC0800(datetime.tzinfo):
 tz = UTC0800()
 monthNow = datetime.datetime.now(tz).strftime("%m")
 dateNow = datetime.datetime.now(tz).strftime("%d/%m/%Y")
+dateTwoWeeks = (datetime.datetime.now(tz) + datetime.timedelta(days = 14)).strftime("%d/%m/%Y")
     
 class Month(ndb.Model):
     #year = ndb.IntegerProperty(indexed=False) to be implemented someday
@@ -338,7 +339,7 @@ class ProcessEvent(webapp2.RequestHandler):
         if start == "":
             start = dateNow
         if end == "":
-            end = "31/12/2015"
+            end = dateTwoWeeks
         eventname = self.request.get('eventname')
         eventloc = self.request.get('eventloc')
         description = self.request.get('descr')
@@ -490,16 +491,94 @@ class BestDay(webapp2.RequestHandler):
         qrySelf = User.query(User.email == email).get()
         id = int(self.request.get('id'))
         qryEvent = Event.query(Event.eventID == id).get()       
-        #check if user can see this event + user status: 0 - invited (IMPOSSIBLE at this stage) 1 - accepted 2 - rejected (should not be here)
+        #check if user can see this event + user status: should only be accepted
         status = 0
         if user.email() not in qryEvent.invitedUsers:
             status = 1
             if user.email() not in qryEvent.acceptedUsers:
                 status = 2
                 self.redirect('/nopermission')
-        #this code has not been tested
+        drange = qryEvent.dateRange
+        #get Months to query, check if months same(months will differ by at most 1)
+        startMonth = drange[0][3:5]
+        sameMonth = False
+        if startMonth == drange[1][3:5]:
+            sameMonth = True
+        #generate bitmask for range of days
+        startDay = int(drange[0][0:2])
+        endDay = int(drange[1][0:2])
+        mask = "1" #MSB padding
+        mask2 = "1" #MSB padding
+        for i in range(startDay - 1):
+            for j in range(4):
+                mask += "0"
+        if sameMonth:
+            for i in range(startDay, endDay + 1):
+                for j in range(4):
+                    mask += "1"
+            for i in range(endDay, 31):
+                for j in range(4):
+                    mask += "0"
+        else:
+            for i in range(startDay, 32):
+                for j in range(4):
+                    mask += "1"
+            for i in range(endDay):
+                for j in range(4):
+                    mask2 += "1"
+            for i in range(endDay, 31):
+                for j in range(4):
+                    mask2 += "0"
+        usercalendars = [int(mask,2)]
+        usercalendars2 = [int(mask2,2)]
+        #get User calendars
+        for i in qryEvent.acceptedUsers:
+            qry = User.query(User.email == i).get()
+            usermonth = "1" #MSB padding
+            month = qry.calendar[int(startMonth) - 1]
+            usermonth += bin(month.w1)
+            usermonth += bin(month.w2)
+            usermonth += bin(month.w3)
+            usermonth += bin(month.w4)
+            usercalendars.append(int(usermonth.replace("0b1", ""),2))
+            if not sameMonth:
+                usermonth2 = "1" #MSB padding
+                month = qry.calendar[int(startMonth) % 11] #in case some asshat plans a Dec - Jan range
+                usermonth2 += bin(month.w1)
+                usermonth2 += bin(month.w2)
+                usermonth2 += bin(month.w3)
+                usermonth2 += bin(month.w4)
+                usercalendars2.append(int(usermonth.replace("0b1", ""), 2))
+        #testing purposes
+        #get free day
+        qryEvent.datetime = getBestDay(usercalendars,usercalendars2, startMonth, sameMonth, self)
+        qryEvent.put()
+        event = listifyEvent(qryEvent, 1)
+        template = jinja_environment.get_template('eventdetails.html')
+        self.response.out.write(template.render({'e': event, 'status': status}))
         
-                    
+def getBestDay(lst1, lst2, monthNum, sameMonth, self):    
+    a = lst1[0]
+    b = lst2[0]
+    for i in lst1:
+        a = a & i
+    for i in lst2:
+        b = b & i
+    a = str(bin(a))
+    b = str(bin(b))
+    firsta = a.find("1", 3)
+    firstb = b.find("1", 3)
+    if (firsta == -1 and firstb == -1):
+        return -1
+    elif (firsta == -1):
+        day = ((firstb - 3) / 4) + 1
+        time = (firstb - 3) % 4
+    else:
+        day = ((firsta - 3) / 4) + 1
+        time = (firsta - 3) % 4
+    best = int(str(day) + monthNum + str(time))
+    return best
+    
 class NoPermission(webapp2.RequestHandler):
     def get(self):
         self.response.write(FUNTIME)

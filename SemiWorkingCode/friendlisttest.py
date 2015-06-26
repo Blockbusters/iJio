@@ -32,6 +32,7 @@ class UTC0800(datetime.tzinfo):
         return self.__class__._name
 tz = UTC0800()
 monthNow = datetime.datetime.now(tz).strftime("%m")
+dateNow = datetime.datetime.now(tz).strftime("%d/%m/%Y")
     
 class Month(ndb.Model):
     #year = ndb.IntegerProperty(indexed=False) to be implemented someday
@@ -63,7 +64,7 @@ class Event(ndb.Model):
     name = ndb.StringProperty(indexed=False)
     location = ndb.StringProperty(indexed=False)
     description = ndb.StringProperty(indexed=False)
-    dateRange = ndb.IntegerProperty(repeated=True) # pair of start and end date
+    dateRange = ndb.StringProperty(repeated=True) # pair of start and end date
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
@@ -88,7 +89,12 @@ BACKHOME = """\
 BACKSEARCH = """\
     <button method="get" onClick="location.href='/search' ">Back to Search</button>
 """
- 
+FUNTIME = '''<div class = "pleaseremovethis">
+                <audio controls autoplay>
+                    <source src="http://a.tumblr.com/tumblr_lqd7maP6Sx1qe6t1po1.mp3" type="audio/mpeg">
+                </audio>
+            </div>
+''' 
 class LoginPage(webapp2.RequestHandler):
     def get(self):
         # Checks for active Google account session
@@ -134,6 +140,7 @@ class HomePage(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qry = User.query(User.email == user.email())
+        self.response.write(FUNTIME)
         name = qry.get().name
         numFriends = str(len(qry.get().friendRequestList))
         numEventReq = str(len(qry.get().eventList))
@@ -164,7 +171,8 @@ class ManageFriends(webapp2.RequestHandler):
             count += 1
         template = jinja_environment.get_template('friendlist.html')
         self.response.out.write(template.render({"printList" : friendListPrint}))
-
+#is there a bug here?, friend requests stay after accepting sometimes?
+#cant seem to replicate tho...
 class ViewRequests(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
@@ -328,11 +336,9 @@ class ProcessEvent(webapp2.RequestHandler):
         end = self.request.get('dateend')
         #dirtyfix:
         if start == "":
-            start = "01/01/2015"
+            start = dateNow
         if end == "":
             end = "31/12/2015"
-        start2 = start[0:2] + start[3:5] + start[6:]
-        end2 = end[0:2] + end[3:5] + end[6:]
         eventname = self.request.get('eventname')
         eventloc = self.request.get('eventloc')
         description = self.request.get('descr')
@@ -354,7 +360,7 @@ class ProcessEvent(webapp2.RequestHandler):
         #Create event
         event = Event(eventID = eventID, invitedUsers = emailinvited, acceptedUsers = [user.email()], 
                       name = eventname, location = eventloc, description = description,
-                      dateRange = [int(start2), int(end2)])
+                      dateRange = [start, end])
         event.put()
                
         template = jinja_environment.get_template('processevent.html')
@@ -365,6 +371,7 @@ def listifyEvent(e, abbr):
     date = e.datetime
     if date == None:
         date = "undecided"
+    e.dateRange = [json.dumps(e.dateRange[0]), json.dumps(e.dateRange[1])]
     eventlst = [e.eventID, date, json.dumps(e.name), json.dumps(e.location), json.dumps(e.description), e.dateRange]
     if (abbr == 1):
         invited = []
@@ -423,7 +430,80 @@ class EventDetails(webapp2.RequestHandler):
                     self.redirect('/nopermission')
         template = jinja_environment.get_template('eventdetails.html')
         self.response.out.write(template.render({'e': event, 'status': status}))
+     
+class AttendEvent(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        email = user.email()
+        qrySelf = User.query(User.email == email).get()
+        id = int(self.request.get('id'))
+        qryEvent = Event.query(Event.eventID == id).get()       
+        #check if user can see this event + user status: 0 - invited (IMPOSSIBLE at this stage) 1 - accepted 2 - rejected
+        status = 0
+        if user.email() not in qryEvent.invitedUsers:
+            status = 1
+            if user.email() not in qryEvent.acceptedUsers:
+                status = 2
+                if user.email() not in qryEvent.rejectedUsers:
+                    self.redirect('/nopermission')
+        action = self.request.get('action')
+        invited = qryEvent.invitedUsers
+        accepted = qryEvent.acceptedUsers
+        rejected = qryEvent.rejectedUsers
+        if action == "no":
+            status = 2
+            if email in invited:
+                invited.remove(email)
+            elif email in accepted:
+                accepted.remove(email)
+            if email not in rejected:
+                rejected.append(email)
+            if id in qrySelf.eventList:
+                #TODO: this line actually removes the event from the guy forever. should remove?
+                qrySelf.eventList.remove(id)
+            if id in qrySelf.eventAcceptedList:
+                qrySelf.eventAcceptedList.remove(id)
+        if action == "yes":
+            if email in invited:
+                invited.remove(email)
+            elif email in rejected:
+                rejected.remove(email)   
+            status = 1
+            if id in qrySelf.eventList: #this by right should be unnecessary
+                qrySelf.eventList.remove(id)
+            if id not in qrySelf.eventAcceptedList: #prevent refresh double add
+                accepted.append(email)
+                qrySelf.eventAcceptedList.append(id)
+        qrySelf.put()
+        qryEvent.invitedUsers = invited
+        qryEvent.acceptedUsers = accepted
+        qryEvent.rejectedUsers = rejected
+        qryEvent.put()
+        event = listifyEvent(qryEvent, 1)
+        template = jinja_environment.get_template('eventdetails.html')
+        self.response.out.write(template.render({'e': event, 'status': status}))
+
+class BestDay(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        email = user.email()
+        qrySelf = User.query(User.email == email).get()
+        id = int(self.request.get('id'))
+        qryEvent = Event.query(Event.eventID == id).get()       
+        #check if user can see this event + user status: 0 - invited (IMPOSSIBLE at this stage) 1 - accepted 2 - rejected (should not be here)
+        status = 0
+        if user.email() not in qryEvent.invitedUsers:
+            status = 1
+            if user.email() not in qryEvent.acceptedUsers:
+                status = 2
+                self.redirect('/nopermission')
+        #this code has not been tested
         
+                    
+class NoPermission(webapp2.RequestHandler):
+    def get(self):
+        self.response.write(FUNTIME)
+        self.response.write('<img src="http://i.imgur.com/2wSnHuv.gif">')
         
 app = webapp2.WSGIApplication([
     ('/', MainPage),
@@ -444,4 +524,7 @@ app = webapp2.WSGIApplication([
     ('/processevent', ProcessEvent),
     ('/checkevents', CheckEvent),
     ('/eventdetails', EventDetails),
+    ('/attendevent', AttendEvent),
+    ('/bestday', BestDay),
+    ('/nopermission', NoPermission),
 ], debug=True)

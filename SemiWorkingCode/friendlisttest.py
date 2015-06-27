@@ -126,13 +126,36 @@ class Register(webapp2.RequestHandler):
 	else:
             tcalendar = []
             for i in range(12):
-                tmonth = Month(month = i + 1, w1 = 0xFFFFFFFF, w2 = 0xFFFFFFFF, w3 = 0xFFFFFFFF, w4 = 0xFFFFFFFF)
+                numDayInMonth = getNumDays(i+1, 2015)
+                if  numDayInMonth == 31:
+                    binw4 = 0xFFFFFFFF
+                elif numDayInMonth == 30:
+                    binw4 = 0xFFFFFFF
+                elif numDayInMonth == 29:
+                    binw4 = 0xFFFFFF
+                else: # 28 days
+                    binw4 = 0xFFFFF
+                tmonth = Month(month = i + 1, w1 = 0xFFFFFFFF, w2 = 0xFFFFFFFF, w3 = 0xFFFFFFFF, w4 = binw4)
                 tcalendar.append(tmonth)
             temp = user.email()
             newuser = User(name = temp.title(), email = temp.lower(), friendList = [], eventList = [], calendar = tcalendar)
             newuser.put()
             template = jinja_environment.get_template('register.html')
             self.response.out.write(template.render())
+
+def getNumDays(monthNum, year):
+    if monthNum == 1 or monthNum == 3 or monthNum == 5 or monthNum == 7 or monthNum == 8 or monthNum == 10 or monthNum == 12:
+        return 31
+    elif monthNum == 2:
+        if checkLeapYear(year):
+            return 29
+        else:
+            return 28
+    else:
+        return 30
+        
+def checkLeapYear(year):
+    return (year % 4 == 0 and year %100 != 0 or year % 400 == 0)
 			
 class LogOut(webapp2.RequestHandler):
 	def get(self):
@@ -280,6 +303,7 @@ class UpdateTime(webapp2.RequestHandler):
         w2 = "0b1"
         w3 = "0b1"
         w4 = "0b1"
+        month = int(self.request.get("month"))
         for i in range(1, 32):
             checked = self.request.get(str(i))
             if (checked == "on"):
@@ -298,13 +322,12 @@ class UpdateTime(webapp2.RequestHandler):
                 w3 += "0"
             else:
                 w3 += "1"
-        for i in range(94, 125):
+        for i in range(94, 125 - (4 * (31 - getNumDays(month,2015)))):
             checked = self.request.get(str(i))
             if (checked == "on"):
                 w4 += "0"
             else:
                 w4 += "1"
-        month = int(self.request.get("month"))
         userMonthObj = qrySelf.calendar[month - 1]
         userMonthObj.w1 = int(w1, 2)
         userMonthObj.w2 = int(w2, 2)
@@ -499,6 +522,8 @@ class BestDay(webapp2.RequestHandler):
         if startMonth == drange[1][3:5]:
             sameMonth = True
         #generate bitmask for range of days
+        numDayInMonth1 = getNumDays(int(startMonth),2015)
+        numDayInMonth2 = getNumDays(int(startMonth)+1,2015)
         startDay = int(drange[0][0:2])
         endDay = int(drange[1][0:2])
         mask = "1" #MSB padding
@@ -513,12 +538,12 @@ class BestDay(webapp2.RequestHandler):
                 for j in range(4):
                     mask += "1"
             # Generate 0 for remaining days after end day.
-            for i in range(endDay, 31):
+            for i in range(endDay, numDayInMonth1):
                 for j in range(4):
                     mask += "0"
         else:
             # Generate 1 for days up till last day of month.
-            for i in range(startDay, 32):
+            for i in range(startDay, numDayInMonth1+1):
                 for j in range(4):
                     mask += "1"
             # Continue to generate 1 up till end day, but for mask2 this time.
@@ -526,7 +551,7 @@ class BestDay(webapp2.RequestHandler):
                 for j in range(4):
                     mask2 += "1"
             # Generate 0 for the remaining days after end day.
-            for i in range(endDay, 31):
+            for i in range(endDay, numDayInMonth2):
                 for j in range(4):
                     mask2 += "0"
         usercalendars = [int(mask,2)] # Mask for 1st month of query.
@@ -549,7 +574,7 @@ class BestDay(webapp2.RequestHandler):
                 usermonth2 += bin(month.w2)
                 usermonth2 += bin(month.w3)
                 usermonth2 += bin(month.w4)
-                usercalendars2.append(int(usermonth.replace("0b1", ""), 2)) # Calendar for user in 2nd month of query.
+                usercalendars2.append(int(usermonth2.replace("0b1", ""), 2)) # Calendar for user in 2nd month of query.
         #testing purposes
         #get free day
         qryEvent.datetime = getBestDay(usercalendars,usercalendars2, startMonth, sameMonth, self)

@@ -1,5 +1,5 @@
 var main = function(){
-    // Toggle Add/Remove Friend
+    // Disabled button upon accepting friend
     $('.accFriend').on('click', function(){
         $(this).attr('disabled', 'disabled');
     });

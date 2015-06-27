@@ -503,46 +503,53 @@ class BestDay(webapp2.RequestHandler):
         endDay = int(drange[1][0:2])
         mask = "1" #MSB padding
         mask2 = "1" #MSB padding
+        # Generate 0 for days not to be considered before start day.
         for i in range(startDay - 1):
             for j in range(4):
                 mask += "0"
         if sameMonth:
+            # Generate 1 for days within range of start to end day.
             for i in range(startDay, endDay + 1):
                 for j in range(4):
                     mask += "1"
+            # Generate 0 for remaining days after end day.
             for i in range(endDay, 31):
                 for j in range(4):
                     mask += "0"
         else:
+            # Generate 1 for days up till last day of month.
             for i in range(startDay, 32):
                 for j in range(4):
                     mask += "1"
+            # Continue to generate 1 up till end day, but for mask2 this time.
             for i in range(endDay):
                 for j in range(4):
                     mask2 += "1"
+            # Generate 0 for the remaining days after end day.
             for i in range(endDay, 31):
                 for j in range(4):
                     mask2 += "0"
-        usercalendars = [int(mask,2)]
-        usercalendars2 = [int(mask2,2)]
+        usercalendars = [int(mask,2)] # Mask for 1st month of query.
+        usercalendars2 = [int(mask2,2)] # Mask for 2nd month of query. (if applicable)
         #get User calendars
         for i in qryEvent.acceptedUsers:
             qry = User.query(User.email == i).get()
             usermonth = "1" #MSB padding
             month = qry.calendar[int(startMonth) - 1]
+            # Generate binary string for user calendar
             usermonth += bin(month.w1)
             usermonth += bin(month.w2)
             usermonth += bin(month.w3)
-            usermonth += bin(month.w4)
-            usercalendars.append(int(usermonth.replace("0b1", ""),2))
+            usermonth += bin(month.w4) 
+            usercalendars.append(int(usermonth.replace("0b1", ""),2)) # Calendar for user in 1st month of query.
             if not sameMonth:
                 usermonth2 = "1" #MSB padding
-                month = qry.calendar[int(startMonth) % 11] #in case some asshat plans a Dec - Jan range
+                month = qry.calendar[int(startMonth) % 12] #in case some asshat plans a Dec - Jan range
                 usermonth2 += bin(month.w1)
                 usermonth2 += bin(month.w2)
                 usermonth2 += bin(month.w3)
                 usermonth2 += bin(month.w4)
-                usercalendars2.append(int(usermonth.replace("0b1", ""), 2))
+                usercalendars2.append(int(usermonth.replace("0b1", ""), 2)) # Calendar for user in 2nd month of query.
         #testing purposes
         #get free day
         qryEvent.datetime = getBestDay(usercalendars,usercalendars2, startMonth, sameMonth, self)
@@ -550,23 +557,39 @@ class BestDay(webapp2.RequestHandler):
         event = listifyEvent(qryEvent, 1)
         template = jinja_environment.get_template('eventdetails.html')
         self.response.out.write(template.render({'e': event, 'status': status}))
-        
+ 
+# Returns best day as a 5 digit integer in ddmmt format, dd = day, mm = month, t = time (0,1,2,3) 
+# Returns -1 is no free day found.
+# lst [0] contains mask, [1...] contains user calendar. monthNum is startMonth, sameMonth is boolean.  
 def getBestDay(lst1, lst2, monthNum, sameMonth, self):    
     a = lst1[0]
     b = lst2[0]
-    for i in lst1:
+    for i in lst1: # a = bitwise and of mask with all users' calendar
         a = a & i
-    for i in lst2:
+    for i in lst2: # b = bitwise and of mask with all users' calendar
         b = b & i
     a = str(bin(a))
     b = str(bin(b))
+    # first free date stored here. Start from 3rd index to avoid 0b1 substring.
     firsta = a.find("1", 3)
     firstb = b.find("1", 3)
-    if (firsta == -1 and firstb == -1):
+    if (firsta == -1 and firstb == -1): # No free date found
         return -1
-    elif (firsta == -1):
-        day = ((firstb - 3) / 4) + 1
-        time = (firstb - 3) % 4
+    elif (firsta == -1): # No free date in 1st queried month.
+        if sameMonth:
+            return -1
+        else:
+            day = ((firstb - 3) / 4) + 1
+            time = (firstb - 3) % 4
+            # Update month by adding 1 
+            monthNum = int(monthNum)
+            monthNum += 1
+            if monthNum == 13:
+                monthNum = 1
+            if monthNum < 10:
+                monthNum = "0" + str(monthNum)
+            else:
+                monthNum = str(monthNum)
     else:
         day = ((firsta - 3) / 4) + 1
         time = (firsta - 3) % 4

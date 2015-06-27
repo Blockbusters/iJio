@@ -1,17 +1,12 @@
-function printTimetable(lstBin) {
+function printTimetable(lstBin,dayStr) {
     counter = 1;
     for (i = 0; i < 4; i++) {
         str = lstBin[i];
         len = str.length;
         for (var j = 1; j < len; j++) {
             if ((counter - 1) % 4 == 0) {
-            //Find way to print day of week
                 document.write("<br> Day ");
-                if ((((counter - 1) / 4) + 1) < 10){
-                    document.write("0");
-                }
-                document.write(((counter - 1) / 4) + 1);
-                
+                document.write(((counter - 1) / 4) + 1);              
             }
             if (str[j] == 0) {
                 document.write("&#09;<input type='checkbox' checked = 'checked' name = ");
@@ -22,9 +17,24 @@ function printTimetable(lstBin) {
                 document.write(counter);
                 document.write("></input>");
             }
+            if ((counter - 1) % 4 == 3){
+                document.write("(" + convertDay(dayStr, counter) + ")");
+            }
             counter++;
         }
     }
+}
+
+function convertDay(dayStr, counter){
+    var daysArray = ["Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var index = -1;
+    for (var i=0; i<7; i++){
+        if (dayStr === daysArray[i]){
+            index = i;
+            break;
+        }
+    }
+    return daysArray[(index + parseInt((counter-1)/4)) % 7];
 }
 
 function printEvents(lstlstEvent) {
@@ -74,7 +84,12 @@ function stringifyTime(num) {
     if (toPadZero){
         num = "0" + num
     }
-    return num.substring(0, 2) + "/" + num.substring(2, 4) + ", " + t;
+    
+    var date = new Date(2015, parseInt(num.substring(2,4))-1, parseInt(num.substring(0,2)));
+    var day = date.getDay()
+    var daysArray = ["Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    
+    return num.substring(0, 2) + "/" + num.substring(2, 4) + "(" + daysArray[day]  +")" +", " + t;
 }
 function printE(lstEvent, status) {
     document.write('<div class="row"><div class="col-md-6">');

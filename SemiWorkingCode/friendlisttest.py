@@ -277,13 +277,14 @@ class AddFriend(webapp2.RequestHandler):
         qryFriend.get().put()
         self.redirect("/search")
 
-#TODO: print days, and vary num of dates.
+#TODO: implement year
 class ManageTimetable(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qrySelf = User.query(User.email == user.email()).get()
         month = int(self.request.get("month"))
         monthStr = datetime.date(2015, month, 1).strftime('%B')
+        dayStr = datetime.date(2015, month, 1).strftime('%A')
         userMonth = []
         userMonthObj = qrySelf.calendar[month - 1]
         #should be settled
@@ -292,8 +293,7 @@ class ManageTimetable(webapp2.RequestHandler):
         userMonth.append(str(bin(userMonthObj.w3)[2:]))
         userMonth.append(str(bin(userMonthObj.w4)[2:]))
         template = jinja_environment.get_template('timetable.html')
-        self.response.out.write(template.render({"monthStr": monthStr, "userMonth": userMonth, "monthNum": month}))
-        self.response.write(BACKHOME)
+        self.response.out.write(template.render({"monthStr": monthStr, "userMonth": userMonth, "monthNum": month, "dayStr": dayStr}))
         
 class UpdateTime(webapp2.RequestHandler):
     def post(self):

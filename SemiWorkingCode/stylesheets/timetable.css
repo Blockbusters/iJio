@@ -14,7 +14,7 @@ button{
     width: 280px;
     background: #47DABD; /*Button background colour*/
     color: white; /*font color*/
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     /*border: 0 none;*/  /*Only enable this if dont want the border*/
 }
 
@@ -57,4 +57,13 @@ input[type=submit]{
 .link {
     font-size: 80%;
     color:white;
+}
+
+.timetable .subheader{
+    margin-bottom: 0px;
+    margin-left: 50px;
+    font-weight: bold;
+    padding-bottom: 0px;
+    position: relative;
+    top: 12px;
 }

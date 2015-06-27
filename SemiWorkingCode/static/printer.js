@@ -7,14 +7,18 @@ function printTimetable(lstBin) {
             if ((counter - 1) % 4 == 0) {
             //Find way to print day of week
                 document.write("<br> Day ");
+                if ((((counter - 1) / 4) + 1) < 10){
+                    document.write("0");
+                }
                 document.write(((counter - 1) / 4) + 1);
+                
             }
             if (str[j] == 0) {
-                document.write("<input type='checkbox' checked = 'checked' name = ");
+                document.write("&#09;<input type='checkbox' checked = 'checked' name = ");
                 document.write(counter);
                 document.write("></input>");
             } else {
-                document.write("<input type='checkbox' name = ");
+                document.write("&#09;<input type='checkbox' name = ");
                 document.write(counter);
                 document.write("></input>");
             }

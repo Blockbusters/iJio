@@ -1,7 +1,7 @@
 <DOCTYPE html>
 <html>
     <head>
-    <title>Butt's {{monthStr}}</title>
+    <title>{{monthStr}}</title>
     <link type="text/css" href="/stylesheets/timetable.css" rel="stylesheet"/> <!-- CSS program -->
     <script type = "text/javascript" src = "static/printer.js"></script>
     </head>
@@ -20,12 +20,12 @@
             <a href = "/managetimetable?month={{monthNum - 1}}"><button>Previous Month</button></a>
             <a href = "/managetimetable?month=1"><button disabled class="disabled">We regret to inform you that 2016 has not been implemented</button></a>
         {% endif %}
-        <div = "Timetable">
-        Print day names/whatever if have time and energy
-        <form action = "/updatetime?month={{monthNum}}" method = "POST">
-            <script>printTimetable({{userMonth}});</script>
-            <p><input type = "submit"></input>
-        </form>
-
+        <div class= "Timetable">
+            <p class="subheader">AM/NN/EV/PM</p>
+            <form action = "/updatetime?month={{monthNum}}" method = "POST">
+                <script>printTimetable({{userMonth}});</script>
+                <p><input type = "submit"></input>
+            </form>
+        </div>
     </body>
 </html>

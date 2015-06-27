@@ -18,6 +18,17 @@ button{
     /*border: 0 none;*/  /*Only enable this if dont want the border*/
 }
 
+.calcdate{
+    padding: 8px 8px; /* Area of space (vertical, horizontal)*/
+    border-radius: 10px; /*Button Shape*/
+    width: 200px;
+    background: #47DABD; /*Button background colour*/
+    color: white; /*font color*/
+    margin-bottom: 25px;
+    font-size: 20px;
+    /*border: 0 none;*/  /*Only enable this if dont want the border*/
+}
+
 .disabled{
     background:#dddddd;
     color:gray;

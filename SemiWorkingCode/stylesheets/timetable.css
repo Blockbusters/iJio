@@ -61,15 +61,16 @@ input[type=submit]{
 
 .timetable .subheader{
     margin-bottom: 0px;
-    /*margin-left: 700px;
-    margin-right: 670px;*/
+    margin-left: 500px;
+    margin-right: 470px;
     font-weight: bold;
     position: relative;
-    top: 25px;
-    right: 10px;
+    top: 5px;
+    right: 25px;
     cursor: help;
     color: black;
-    /*border: 2px solid black;*/
+    border: 2px solid black;
+    z-index: 1200px;
 }
 
 .timetable .boxes{

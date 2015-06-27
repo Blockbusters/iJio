@@ -39,7 +39,7 @@ function printEvents(lstlstEvent) {
 //      0       1     2       3          4           5         6        7          8
 //  [eventID, date, name, location, description, dateRange, invited, accepted, rejected]
 function printEvent(lstEvent) {
-    document.write(lstEvent[2] + " at " + lstEvent[3] +" on " + lstEvent[1])
+    document.write(lstEvent[2] + " at " + lstEvent[3] +" on " + stringifyTime(lstEvent[1]))
     document.write('  <a class = "link" href = /eventdetails?id=');
     document.write(lstEvent[0])
     document.write('><sub> View Details</sub></a>');
@@ -49,7 +49,11 @@ function stringifyTime(num) {
     if (num == "undecided") {
         return "undecided";
     }
+    if (num == -1){
+        return "Not possible";
+    }
     time = num % 10
+    toPadZero = false;
     if (time == 0) {
         t =  "Morning";
     } else if (time == 1) {
@@ -59,7 +63,13 @@ function stringifyTime(num) {
     } else {
         t = "Night";
     }
+    if (num < 10000){
+        toPadZero = true;
+    }
     num = num.toString();
+    if (toPadZero){
+        num = "0" + num
+    }
     return num.substring(0, 2) + "/" + num.substring(2, 4) + ", " + t;
 }
 function printE(lstEvent, status) {
@@ -93,13 +103,13 @@ function printE(lstEvent, status) {
     document.write('<div class="row"><div class="col-md-6">');
     document.write('Date: </div><div class="col-md-6">');
     document.write(stringifyTime(lstEvent[1]));
-    document.write(' <a id = "best" href = /bestday?id=');
+    document.write(' <button class="calcdate" id = "best" onClick = \'location.href="/bestday?id=');
     document.write(lstEvent[0]);
     if (lstEvent[1] == "undecided") {
-        document.write('>Get best date</a>');
+        document.write('"\'>Get best date</button>');
         
     } else {
-        document.write('>Recalculate</a>');
+        document.write('"\'>Recalculate</button>');
     }
     document.write('</div></div>');
     

@@ -19,3 +19,7 @@ input[type=submit]{
 .request-display a{
     color: #333;
 }
+
+.profile a{
+    color: #47DABD;
+}

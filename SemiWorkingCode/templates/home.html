@@ -7,7 +7,16 @@
     </head>
     <body class = "bg">
         <div class="container">
-            <h1> Welcome to iJio, {{name}}</h1>
+            <div class="row">
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-6">
+                    <div class="profile">
+                        <h1> Welcome to iJio, <a href="/profile">{{name}}</a></h1>
+                        <!--<button type="button" class="btn btn-primary btn-sm" method ="get" onClick="location.href='/'">{{name}}</button></h1>-->
+                    </div>
+                </div>
+            </div>
             <div class="request-display">
                 {% if counter == "0": %} <!--NOTE: counter is a string -->
                     <p>You have no friend requests.</p>

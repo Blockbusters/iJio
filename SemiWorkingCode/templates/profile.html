@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
+        <link type="text/css" href="/stylesheets/profile.css" rel="stylesheet"/> <!-- CSS program -->
+        <title>Profile</title>
+        <script>
+            function updateStatus() {
+                var x = document.forms["statusform"]["statusmsg"].value;
+                if (x == "None" || x == "") {
+                    alert("Please update your status!");
+                    return false;
+                }
+                else if (x == "{{status}}"){
+                    alert("You have not changed your status!");
+                    return false;
+                }
+                else{
+                    alert("Status updated!");
+                    return true;
+                }
+            }   
+        </script>
+    </head>
+    <body class = "bg">
+        <div class="container">
+            <h1> Your profile</h1>
+            <div class="information">
+                <p>Your name: <input type="text" value="{{name}}" disabled></p>
+                <p>Email Address: <input type="text" value="{{email}}" disabled></p>
+                <form name="statusform" action="/updatestatus" method="post" onsubmit="return updateStatus()">
+                    <p>Personal Status Message: <input type="text" name="statusmsg" value="{{status}}">
+                    <input type="submit" value="Change Status"></p>
+                </form>
+            </div>
+            <button class="click" method="get" onClick="location.href='/home' ">Back to Home Page</button>
+        </div>
+    </body>
+</html>

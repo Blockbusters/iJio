@@ -48,6 +48,7 @@ class Month(ndb.Model):
 class User(ndb.Model):
     name = ndb.StringProperty()
     email = ndb.StringProperty()
+    status = ndb.StringProperty()
     friendList = ndb.StringProperty(repeated=True, indexed=False) # list of user id
     friendRequestList = ndb.StringProperty(repeated=True, indexed=False) # list of user id incoming friends requests
     friendRequestingList = ndb.StringProperty(repeated=True, indexed=False) # list of user id outgoing friend requests
@@ -165,7 +166,7 @@ class HomePage(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qry = User.query(User.email == user.email())
-        self.response.write(FUNTIME)
+        # self.response.write(FUNTIME)
         name = qry.get().name
         numFriends = str(len(qry.get().friendRequestList))
         numEventReq = str(len(qry.get().eventList))
@@ -192,7 +193,7 @@ class ManageFriends(webapp2.RequestHandler):
         count = 1
         for friend in qrySelf.get().friendList:
             qryFriend = User.query(User.email == friend).get()
-            friendListPrint.append(str(count) + ") Name: " + qryFriend.name + ", Email: " + friend + "<br>")
+            friendListPrint.append(str(count) + ") Name: " + qryFriend.name + ", Email: " + friend + ", Status: " + str(qryFriend.status))
             count += 1
         template = jinja_environment.get_template('friendlist.html')
         self.response.out.write(template.render({"printList" : friendListPrint}))
@@ -625,6 +626,26 @@ class NoPermission(webapp2.RequestHandler):
     def get(self):
         self.response.write(FUNTIME)
         self.response.write('<img src="http://i.imgur.com/2wSnHuv.gif">')
+
+class Profile(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        email = user.email()
+        qrySelf = User.query(User.email == email).get()
+        name = qrySelf.name
+        status = qrySelf.status
+        template = jinja_environment.get_template('profile.html')
+        self.response.out.write(template.render({'name': name, 'email': email, 'status':status}))
+
+class UpdateStatus(webapp2.RequestHandler):
+    def post(self):
+        newStatus = self.request.get('statusmsg')
+        user = users.get_current_user()
+        qrySelf = User.query(User.email == user.email()).get()
+        qrySelf.status = newStatus
+        qrySelf.put()
+        time.sleep(0.2)
+        self.redirect("/profile")
         
 app = webapp2.WSGIApplication([
     ('/', MainPage),
@@ -648,4 +669,6 @@ app = webapp2.WSGIApplication([
     ('/attendevent', AttendEvent),
     ('/bestday', BestDay),
     ('/nopermission', NoPermission),
+    ('/profile', Profile),
+    ('/updatestatus', UpdateStatus),
 ], debug=True)

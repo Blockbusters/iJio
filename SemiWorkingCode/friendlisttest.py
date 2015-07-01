@@ -32,12 +32,13 @@ class UTC0800(datetime.tzinfo):
         return self.__class__._name
 tz = UTC0800()
 monthNow = datetime.datetime.now(tz).strftime("%m")
+yearNow = datetime.datetime.now(tz).strftime("%Y")
 # These variables are not used currently.
 #dateNow = datetime.datetime.now(tz).strftime("%d/%m/%Y")
 #dateTwoWeeks = (datetime.datetime.now(tz) + datetime.timedelta(days = 14)).strftime("%d/%m/%Y")
     
 class Month(ndb.Model):
-    #year = ndb.IntegerProperty(indexed=False) to be implemented someday
+    year = ndb.IntegerProperty(indexed=False) 
     month = ndb.IntegerProperty(indexed=False)
     # 0 means busy, 1 is free.
     w1 = ndb.IntegerProperty(indexed=False) # stores 31 bits: MSB + (Morn/Aft/Eve/Night) 
@@ -116,27 +117,16 @@ class LoginPage(webapp2.RequestHandler):
 		# Request for login
             self.redirect(users.create_login_url(self.request.uri))
 
-
-#TODO: add year to months and calendar
 class Register(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qry = User.query(User.email == user.email())
         if qry.count() > 0:
             self.redirect("/home")
-	else:
+        else:
             tcalendar = []
             for i in range(12):
-                numDayInMonth = getNumDays(i+1, 2015)
-                if  numDayInMonth == 31:
-                    binw4 = 0xFFFFFFFF
-                elif numDayInMonth == 30:
-                    binw4 = 0xFFFFFFF
-                elif numDayInMonth == 29:
-                    binw4 = 0xFFFFFF
-                else: # 28 days
-                    binw4 = 0xFFFFF
-                tmonth = Month(month = i + 1, w1 = 0xFFFFFFFF, w2 = 0xFFFFFFFF, w3 = 0xFFFFFFFF, w4 = binw4)
+                tmonth = createMonthObj(i+1, int(yearNow))
                 tcalendar.append(tmonth)
             temp = user.email()
             newuser = User(name = temp.title(), email = temp.lower(), friendList = [], eventList = [], calendar = tcalendar)
@@ -157,6 +147,20 @@ def getNumDays(monthNum, year):
         
 def checkLeapYear(year):
     return (year % 4 == 0 and year %100 != 0 or year % 400 == 0)
+
+# Returns a Month Object with correct weeks field, given tmonth and tyear parameters as integers.
+def createMonthObj(tmonth, tyear):
+    numDayInMonth = getNumDays(tmonth, tyear)
+    if  numDayInMonth == 31:
+        binw4 = 0xFFFFFFFF
+    elif numDayInMonth == 30:
+        binw4 = 0xFFFFFFF
+    elif numDayInMonth == 29:
+        binw4 = 0xFFFFFF
+    else: # 28 days
+        binw4 = 0xFFFFF
+    return Month(year=tyear, month = tmonth, w1 = 0xFFFFFFFF, w2 = 0xFFFFFFFF, w3 = 0xFFFFFFFF, w4 = binw4)
+
 			
 class LogOut(webapp2.RequestHandler):
 	def get(self):
@@ -171,7 +175,7 @@ class HomePage(webapp2.RequestHandler):
         numFriends = str(len(qry.get().friendRequestList))
         numEventReq = str(len(qry.get().eventList))
         template = jinja_environment.get_template('home.html')
-        self.response.out.write(template.render({"name":name,"counter":numFriends, "month":monthNow, "numEventReq":numEventReq}))
+        self.response.out.write(template.render({"name":name,"counter":numFriends, "month":monthNow, "numEventReq":numEventReq,"year":yearNow}))
 		
 #TODO: Is it possible to shove all login required functionality into one python file where we can declare global user and qry?
 		
@@ -182,7 +186,7 @@ class Update(webapp2.RequestHandler):
 		tempUser = qry.get()
 		tempUser.name = self.request.get('content').title()
 		tempUser.put()
-		time.sleep(1) # import time. Waits for 1 second so that db can be updated with new name.
+		time.sleep(0.5) # import time. Waits for 1 second so that db can be updated with new name.
 		self.redirect("/login")
 
 class ManageFriends(webapp2.RequestHandler):
@@ -278,23 +282,35 @@ class AddFriend(webapp2.RequestHandler):
         qryFriend.get().put()
         self.redirect("/search")
 
-#TODO: implement year
 class ManageTimetable(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qrySelf = User.query(User.email == user.email()).get()
-        month = int(self.request.get("month"))
-        monthStr = datetime.date(2015, month, 1).strftime('%B')
-        dayStr = datetime.date(2015, month, 1).strftime('%A')
+        tmonth = int(self.request.get("month"))
+        tyear = int(self.request.get("year"))
+        monthStr = datetime.date(tyear, tmonth, 1).strftime('%B')
+        dayStr = datetime.date(tyear, tmonth, 1).strftime('%A')
+        yearStr = datetime.date(tyear, tmonth, 1).strftime('%Y')
         userMonth = []
-        userMonthObj = qrySelf.calendar[month - 1]
+        # try to find calendar
+        userMonthObj = "Not Created"
+        for monthobj in qrySelf.calendar:
+            if monthobj.month == tmonth and monthobj.year == tyear:
+                userMonthObj = monthobj
+                break
+        # check if calendar is found.
+        if str(userMonthObj) == "Not Created":
+            monthobjnew = createMonthObj(tmonth, tyear)
+            qrySelf.calendar.append(monthobjnew)
+            userMonthObj = monthobjnew
+            qrySelf.put()
         #should be settled
         userMonth.append(str(bin(userMonthObj.w1)[2:]))
         userMonth.append(str(bin(userMonthObj.w2)[2:]))
         userMonth.append(str(bin(userMonthObj.w3)[2:]))
         userMonth.append(str(bin(userMonthObj.w4)[2:]))
         template = jinja_environment.get_template('timetable.html')
-        self.response.out.write(template.render({"monthStr": monthStr, "userMonth": userMonth, "monthNum": month, "dayStr": dayStr}))
+        self.response.out.write(template.render({"monthStr": monthStr, "userMonth": userMonth, "monthNum": tmonth, "dayStr": dayStr, "yearStr":yearStr, "yearNum":tyear}))
         
 class UpdateTime(webapp2.RequestHandler):
     def post(self):
@@ -305,6 +321,7 @@ class UpdateTime(webapp2.RequestHandler):
         w3 = "0b1"
         w4 = "0b1"
         month = int(self.request.get("month"))
+        year = int(self.request.get("year"))
         for i in range(1, 32):
             checked = self.request.get(str(i))
             if (checked == "on"):
@@ -323,20 +340,29 @@ class UpdateTime(webapp2.RequestHandler):
                 w3 += "0"
             else:
                 w3 += "1"
-        for i in range(94, 125 - (4 * (31 - getNumDays(month,2015)))):
+        for i in range(94, 125 - (4 * (31 - getNumDays(month,year)))):
             checked = self.request.get(str(i))
             if (checked == "on"):
                 w4 += "0"
             else:
                 w4 += "1"
-        userMonthObj = qrySelf.calendar[month - 1]
-        userMonthObj.w1 = int(w1, 2)
-        userMonthObj.w2 = int(w2, 2)
-        userMonthObj.w3 = int(w3, 2)
-        userMonthObj.w4 = int(w4, 2)
-        qrySelf.put()
-        time.sleep(0.5)
-        self.redirect("/managetimetable?month={month}".format(month = month))
+        # Find Month object.
+        userMonthObj = "Not Found"
+        for monthobj in qrySelf.calendar:
+            if monthobj.month == month and monthobj.year == year:
+                userMonthObj = monthobj
+                break
+        # check if calendar can be found.
+        if str(userMonthObj) == "Not Found":
+            self.response.write("<h1>Error Encountered @ UpdateTime</h1><p>Specified month and year cannot be found.</p>") # Debug code if this is seen..
+        else: # Found
+            userMonthObj.w1 = int(w1, 2)
+            userMonthObj.w2 = int(w2, 2)
+            userMonthObj.w3 = int(w3, 2)
+            userMonthObj.w4 = int(w4, 2)
+            qrySelf.put()
+            time.sleep(0.5)
+            self.redirect("/managetimetable?month={month}&year={year}".format(month = month, year=year))
 
 class CreateEvents(webapp2.RequestHandler):
     def get(self):
@@ -520,11 +546,15 @@ class BestDay(webapp2.RequestHandler):
         #get Months to query, check if months same(months will differ by at most 1)
         startMonth = drange[0][3:5]
         sameMonth = False
-        if startMonth == drange[1][3:5]:
+        endMonth = drange[1][3:5]
+        if startMonth == endMonth:
             sameMonth = True
+        #get Year
+        startYear = drange[0][6:10]
+        endYear = drange[1][6:10]
         #generate bitmask for range of days
-        numDayInMonth1 = getNumDays(int(startMonth),2015)
-        numDayInMonth2 = getNumDays(int(startMonth)+1,2015)
+        numDayInMonth1 = getNumDays(int(startMonth),int(startYear))
+        numDayInMonth2 = getNumDays(int(endMonth),int(endYear))
         startDay = int(drange[0][0:2])
         endDay = int(drange[1][0:2])
         mask = "1" #MSB padding
@@ -561,7 +591,22 @@ class BestDay(webapp2.RequestHandler):
         for i in qryEvent.acceptedUsers:
             qry = User.query(User.email == i).get()
             usermonth = "1" #MSB padding
-            month = qry.calendar[int(startMonth) - 1]
+
+            # Find Month object.
+            userMonthObj = "Not Found"
+            for monthobj in qry.calendar:
+                if monthobj.month == int(startMonth) and monthobj.year == int(startYear):
+                    userMonthObj = monthobj
+                    break
+            # check if calendar can be found.
+            if str(userMonthObj) == "Not Found":
+                monthobjnew = createMonthObj(int(startMonth), int(startYear))
+                qry.calendar.append(monthobjnew)
+                userMonthObj = monthobjnew
+                qry.put()
+        
+            #month = qry.calendar[int(startMonth) - 1]
+            month = userMonthObj
             # Generate binary string for user calendar
             usermonth += bin(month.w1)
             usermonth += bin(month.w2)
@@ -570,7 +615,22 @@ class BestDay(webapp2.RequestHandler):
             usercalendars.append(int(usermonth.replace("0b1", ""),2)) # Calendar for user in 1st month of query.
             if not sameMonth:
                 usermonth2 = "1" #MSB padding
-                month = qry.calendar[int(startMonth) % 12] #in case some asshat plans a Dec - Jan range
+                
+                # Find Month object.
+                userMonthObj = "Not Found"
+                for monthobj in qry.calendar:
+                    if monthobj.month == int(endMonth) and monthobj.year == int(endYear):
+                        userMonthObj = monthobj
+                        break
+                # check if calendar can be found.
+                if str(userMonthObj) == "Not Found":
+                    monthobjnew = createMonthObj(int(endMonth), int(endYear))
+                    qry.calendar.append(monthobjnew)
+                    userMonthObj = monthobjnew
+                    qry.put()
+                
+                # month = qry.calendar[int(startMonth) % 12] #in case some asshat plans a Dec - Jan range
+                month = userMonthObj
                 usermonth2 += bin(month.w1)
                 usermonth2 += bin(month.w2)
                 usermonth2 += bin(month.w3)
@@ -578,16 +638,16 @@ class BestDay(webapp2.RequestHandler):
                 usercalendars2.append(int(usermonth2.replace("0b1", ""), 2)) # Calendar for user in 2nd month of query.
         #testing purposes
         #get free day
-        qryEvent.datetime = getBestDay(usercalendars,usercalendars2, startMonth, sameMonth, self)
+        qryEvent.datetime = getBestDay(usercalendars,usercalendars2, startMonth, sameMonth, startYear, self)
         qryEvent.put()
         event = listifyEvent(qryEvent, 1)
         template = jinja_environment.get_template('eventdetails.html')
         self.response.out.write(template.render({'e': event, 'status': status}))
  
-# Returns best day as a 5 digit integer in ddmmt format, dd = day, mm = month, t = time (0,1,2,3) 
+# Returns best day as a 9 digit integer in ddmmyyyyt format, dd = day, mm = month, yyyy = year, t = time (0,1,2,3) 
 # Returns -1 is no free day found.
-# lst [0] contains mask, [1...] contains user calendar. monthNum is startMonth, sameMonth is boolean.  
-def getBestDay(lst1, lst2, monthNum, sameMonth, self):    
+# lst [0] contains mask, [1...] contains user calendar. monthNum is startMonth, sameMonth is boolean, startYear is string  
+def getBestDay(lst1, lst2, monthNum, sameMonth, startYear, self):    
     a = lst1[0]
     b = lst2[0]
     for i in lst1: # a = bitwise and of mask with all users' calendar
@@ -610,8 +670,9 @@ def getBestDay(lst1, lst2, monthNum, sameMonth, self):
             # Update month by adding 1 
             monthNum = int(monthNum)
             monthNum += 1
-            if monthNum == 13:
+            if monthNum == 13: # Get next year January
                 monthNum = 1
+                startYear = str(int(startYear) + 1)
             if monthNum < 10:
                 monthNum = "0" + str(monthNum)
             else:
@@ -619,7 +680,7 @@ def getBestDay(lst1, lst2, monthNum, sameMonth, self):
     else:
         day = ((firsta - 3) / 4) + 1
         time = (firsta - 3) % 4
-    best = int(str(day) + monthNum + str(time))
+    best = int(str(day) + monthNum + startYear + str(time))
     return best
     
 class NoPermission(webapp2.RequestHandler):

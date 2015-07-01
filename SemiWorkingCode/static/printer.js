@@ -122,24 +122,25 @@ function printE(lstEvent, status) {
     document.write('<div class="row"><div class="col-md-5">');
     document.write('Date: </div><div class="col-md-7">');
     document.write(stringifyTime(lstEvent[1]));
-    document.write(' <button class="calcdate" id = "best" onClick = \'location.href="/bestday?id=');
-    document.write(lstEvent[0]);
-    if (lstEvent[1] == "undecided") {
-        document.write('"\'>Get best date</button>');
-        
-    } else {
-        document.write('"\'>Recalculate</button>');
-    }
     document.write('</div></div>');
     
-    document.write('<div class="row"><div class="col-md-3"></div>');
+    document.write('<div class="row"><div class="col-md-2"></div>');
     document.write('<div class="col-md-3"><button id = "attend" onClick = \'location.href="/attendevent?action=yes&id=');
     document.write(lstEvent[0]);
     document.write('"\'>Attend</button></div>');
     document.write('<div class="col-md-3"><button id = "reject" onClick = \'location.href="/attendevent?action=no&id=');
     document.write(lstEvent[0]);
     document.write('"\'>Reject</button></div>');
-    document.write('</div>');
+    document.write('<div class="col-md-3">');
+    document.write(' <button class="calcdate" id = "best" onClick = \'location.href="/bestday?id=');
+    document.write(lstEvent[0]);
+    if (lstEvent[1] == "undecided") {
+        document.write('"\'>Get best date</button>');        
+    } else {
+        document.write('"\'>Recalculate</button>');
+    }
+    document.write('</div></div>');
+    
     
     //disable buttons based on status: 0 - invited 1 - accepted 2 - rejected
     if (status == 1) {

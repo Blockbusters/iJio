@@ -346,7 +346,7 @@ class CreateEvents(webapp2.RequestHandler):
         friendList = []
         for friend in namelist:
             qryFriend = User.query(User.email == friend).get()
-            friendList.append([qryFriend.name, friend])
+            friendList.append([qryFriend.name, friend, friend[:len(friend)-4]])
         template = jinja_environment.get_template('createevents.html')
         self.response.out.write(template.render({"friendlist":friendList}))
         

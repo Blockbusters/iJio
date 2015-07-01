@@ -46,7 +46,7 @@
                             <button type="button" class="click" id="friendbtn">Friend List</button>
                             <ul class="friendmenu" id="friendmenu">
                                 {% for pengyou in friendlist: %}
-                                    <li class="friend" id = {{pengyou[1]}}><a href="#">{{pengyou[0]}}</a><img src="static/tick.png"></img></li>
+                                    <li class="friend" id = {{pengyou[1]}}><a href="#">{{pengyou[0]}} ({{pengyou[2]}})</a><img src="static/tick.png"></img></li>
                                 {% endfor %}
                             </ul>
                         </div>

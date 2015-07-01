@@ -19,9 +19,9 @@ button{
 }
 
 .calcdate{
-    padding: 8px 8px; /* Area of space (vertical, horizontal)*/
+    padding: 5px 5px; /* Area of space (vertical, horizontal)*/
     border-radius: 10px; /*Button Shape*/
-    width: 200px;
+    width: 180px;
     background: #47DABD; /*Button background colour*/
     color: white; /*font color*/
     margin-bottom: 25px;
@@ -44,6 +44,12 @@ input[type=submit]{
     color: white; /*font color*/
     margin-bottom: 25px;
     /*border: 0 none;*/  /*Only enable this if dont want the border*/
+}
+
+button#attend, button#reject{
+    padding: 5px 5px;
+    width: 150px;
+    font-size: 20px;
 }
 
 .words{
@@ -75,4 +81,24 @@ input[type=submit]{
 
 .timetable .boxes{
     text-align: left;
+}
+
+.map{
+    width: 400px;
+    height: 250px;
+}
+
+.space{
+    height: 80px;
+}
+
+.search{
+    background-color: #fff;
+    font-family: Roboto;
+    font-size: 15px;
+    font-weight: 300;
+    margin-left: 12px;
+    padding: 0 11px 0 13px;
+    text-overflow: ellipsis;
+    width: 280px;
 }

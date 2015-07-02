@@ -77,7 +77,8 @@ class MainPage(webapp2.RequestHandler):
             counter = Counter(created = True, count = 1)
             counter.put()
             qryCounter = Counter.query(Counter.created == True)
-        self.redirect("/login")
+        template = jinja_environment.get_template('main.html')
+        self.response.out.write(template.render())
        
 LOGOUT_OPTION = """\
 	<form action="/logout">

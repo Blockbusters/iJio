@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
+        <link type="text/css" href="/stylesheets/main.css" rel="stylesheet"/> <!-- CSS program -->
+        <title>iJio Main Page</title>
+    </head>
+    <body class = "bg">
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+        </script>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-6">
+                    <div class="header">
+                        <img width="300px" height="150px" src="/static/iJio.png"></img>
+                        <h2> Outings made easy!</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="pictures">
+                <img width="600px" height="400px" src="/static/iJio cover.jpg"></img>
+            </div>
+            <div class = "row nav">
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-6">
+                    <form action="/login">
+                        <input type="submit" value="Login / Signup">
+                    </form>  
+                </div>           
+            </div>
+            <div class="fb-like" data-href="http://ijio-app.appspot.com" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true">
+            </div>
+        </div>
+    </body>
+</html>

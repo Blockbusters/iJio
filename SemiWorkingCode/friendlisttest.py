@@ -96,7 +96,7 @@ BACKSEARCH = """\
 """
 FUNTIME = '''<div class = "pleaseremovethis">
                 <audio controls autoplay>
-                    <source src="http://a.tumblr.com/tumblr_lqd7maP6Sx1qe6t1po1.mp3" type="audio/mpeg">
+                    <source src="http://a.tumblr.com/tumblr_m94d1glrHz1rx789ho1.mp3" type="audio/mpeg">
                 </audio>
             </div>
 ''' 

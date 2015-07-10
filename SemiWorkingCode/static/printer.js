@@ -1,3 +1,4 @@
+//dayStr is the first day of the month
 function printTimetable(lstBin,dayStr) {
     counter = 1;
     for (i = 0; i < 4; i++) {
@@ -23,6 +24,69 @@ function printTimetable(lstBin,dayStr) {
             counter++;
         }
     }
+}
+
+function printTimetable2(dayStr, numDayInMonth, lstBin) {
+    document.write('<img src="static/DayNames.png"><p>')
+    var Cal = "Cal" + dayStr
+    document.write("<img src = 'static/");
+    document.write(Cal);
+    document.write(".png'>");
+    //get first day that has not been printed
+    var daysArray = ["Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var lastDay = 29;
+    for (var i=0; daysArray[i] != dayStr; i++){
+        lastDay--;
+    }
+    //print missing days
+    document.write("<br>");
+    var linebreakcounter = 0;
+    for (;lastDay <= numDayInMonth; lastDay++) {
+        if (linebreakcounter != 0 && linebreakcounter % 7 == 0) {
+            document.write("<br>");
+        }
+        document.write("<img src = 'static/");
+        document.write(lastDay);
+        document.write(".png'>");
+        linebreakcounter++;
+    }
+    //print empty squares
+    while (linebreakcounter % 7 != 0) {
+            document.write("<img src = 'static/blanksq.png'>");
+            linebreakcounter++;
+    }
+    var numlinesprinted = (linebreakcounter / 7) + 4;
+    //second layer starts here
+    document.write("</span><span class= 'layer2'><br>");
+    counter = 1;
+    for (i = 0; i < 4; i++) {
+        str = lstBin[i];
+        len = str.length;
+        for (var j = 1; j < len; j++) {
+            if ((counter - 1) % 4 == 0) {
+                //document.write("<br> Day ");
+                //document.write(((counter - 1) / 4) + 1);              
+            }
+            if (str[j] == 0) {
+                document.write("<img src='static/greensq50.png'>");
+                //document.write("&#09;<input type='checkbox' checked = 'checked' name = ");
+                //document.write(counter);
+                //document.write("></input>");
+            } else {
+                document.write("<img src='static/redsq50.png'>");
+                //document.write("&#09;<input type='checkbox' name = ");
+                //document.write(counter);
+                //document.write("></input>");
+            }
+            if ((counter - 1) % 4 == 3){
+                //document.write("(" + convertDay(dayStr, counter) + ")");
+            }
+            counter++;
+        }
+    }
+    //shift second layer up
+    var toshift = numlinesprinted + "00px"
+    $(".layer2").css("bottom", toshift);
 }
 
 function convertDay(dayStr, counter){

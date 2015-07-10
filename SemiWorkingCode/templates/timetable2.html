@@ -1,0 +1,54 @@
+<DOCTYPE html>
+<html>
+    <head>
+        <title>{{monthStr}} {{yearStr}}</title>
+        <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
+        <link type="text/css" href="/stylesheets/timetable2.css" rel="stylesheet"/> <!-- CSS program -->
+        <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> <!-- Load jQuery -->
+        <script type="text/javascript" src="static/timetable.js"></script> <!-- JavaScript program -->
+        <script type = "text/javascript" src = "static/printer.js"></script>
+    </head>
+    <body class = 'bg'>
+        <div class="container">
+            <div class = "bigName">
+                {{monthStr}} {{yearStr}}
+            </div>
+            <br>
+            {% if monthNum == 1 and yearNum == 2015: %} 
+                <a href = "#"><button disabled class="disabled">Let the past be the past, do not look back, look forward!</button></a>
+                <a href = "/managetimetable2?month=2&year=2015"><button>Next Month</button></a>
+            {% elif monthNum == 1: %} 
+                <a href = "/managetimetable2?month=12&year={{yearNum - 1}}"><button>Previous Month</button></a>
+                <a href = "/managetimetable2?month=2&year={{yearNum}}"><button>Next Month</button></a>
+            {% elif monthNum < 12: %} 
+                <a href = "/managetimetable2?month={{monthNum - 1}}&year={{yearNum}}"><button>Previous Month</button></a>
+                <a href = "/managetimetable2?month={{monthNum + 1}}&year={{yearNum}}"><button>Next Month</button></a>
+            {% elif monthNum == 12: %}
+                <a href = "/managetimetable2?month=11&year={{yearNum}}"><button>Previous Month</button></a>
+                <a href = "/managetimetable2?month=1&year={{yearNum + 1}}"><button>Next Month</button></a>
+            {% endif %}
+        </div>
+        <div class="container">
+            <div class= "timetable">
+                <!--<p class="subheader">AM/NN/EV/PM</p>-->
+                <div class="row">
+                    <span class= "layer1">
+                        <script>printTimetable2("{{dayStr}}", {{numDayInMonth}}, {{userMonth}});</script>
+                    </span>
+                </div>
+                <div class="row">
+                    <!--
+                    <form class="boxes" action = "/updatetime?month={{monthNum}}&year={{yearNum}}" method = "POST">
+                        <script>printTimetable({{userMonth}} , "{{dayStr}}");</script>
+                        <p>
+                        <input type = "submit"></input>
+                    </form>
+                    -->
+                </div>    
+            </div>
+            <div class="row">
+                <button method="get" onClick="location.href='/home' ">Back to Home Page</button>
+            </div>
+        </div>
+    </body>
+</html>

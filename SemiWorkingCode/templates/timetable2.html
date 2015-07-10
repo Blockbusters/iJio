@@ -29,6 +29,7 @@
             {% endif %}
         </div>
         <div class="container">
+            <div class="col-md-9">
             <div class= "timetable">
                 <!--<p class="subheader">AM/NN/EV/PM</p>-->
                 <div class="row">
@@ -36,19 +37,23 @@
                         <script>printTimetable2("{{dayStr}}", {{numDayInMonth}}, {{userMonth}});</script>
                     </span>
                 </div>
+            </div>
+            </div>
+            <div class="col-md-3">
                 <div class="row">
-                    <!--
+                    <button method="get" onClick="location.href='/home' ">Back to Home Page</button>
+                </div>
+                <div class="row">
                     <form class="boxes" action = "/updatetime?month={{monthNum}}&year={{yearNum}}" method = "POST">
-                        <script>printTimetable({{userMonth}} , "{{dayStr}}");</script>
                         <p>
                         <input type = "submit"></input>
+                        <div class = "invisible">
+                            <script>printTimetable({{userMonth}} , "{{dayStr}}");</script>
+                        </div>
                     </form>
-                    -->
                 </div>    
             </div>
-            <div class="row">
-                <button method="get" onClick="location.href='/home' ">Back to Home Page</button>
-            </div>
+            
         </div>
     </body>
 </html>

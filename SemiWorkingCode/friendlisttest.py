@@ -363,7 +363,7 @@ class UpdateTime(webapp2.RequestHandler):
             userMonthObj.w4 = int(w4, 2)
             qrySelf.put()
             time.sleep(0.5)
-            self.redirect("/managetimetable?month={month}&year={year}".format(month = month, year=year))
+            self.redirect("/managetimetable2?month={month}&year={year}".format(month = month, year=year))
 
 class CreateEvents(webapp2.RequestHandler):
     def get(self):
@@ -719,6 +719,7 @@ class ManageTimetable2(webapp2.RequestHandler):
         dayStr = datetime.date(tyear, tmonth, 1).strftime('%A')
         yearStr = datetime.date(tyear, tmonth, 1).strftime('%Y')
         userMonth = []
+        numDayInMonth = getNumDays(tmonth, tyear)
         # try to find calendar
         userMonthObj = "Not Created"
         for monthobj in qrySelf.calendar:
@@ -736,7 +737,7 @@ class ManageTimetable2(webapp2.RequestHandler):
         userMonth.append(str(bin(userMonthObj.w3)[2:]))
         userMonth.append(str(bin(userMonthObj.w4)[2:]))
         template = jinja_environment.get_template('timetable2.html')
-        self.response.out.write(template.render({"monthStr": monthStr, "userMonth": userMonth, "monthNum": tmonth, "dayStr": dayStr, "yearStr":yearStr, "yearNum":tyear}))
+        self.response.out.write(template.render({"monthStr": monthStr, "userMonth": userMonth, "monthNum": tmonth, "dayStr": dayStr, "yearStr":yearStr, "yearNum":tyear, "numDayInMonth": numDayInMonth}))
 
 class Test(webapp2.RequestHandler):
     def get(self):

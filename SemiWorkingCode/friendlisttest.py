@@ -171,7 +171,7 @@ class HomePage(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qry = User.query(User.email == user.email())
-        # self.response.write(FUNTIME)
+        self.response.write(FUNTIME)
         name = qry.get().name
         numFriends = str(len(qry.get().friendRequestList))
         numEventReq = str(len(qry.get().eventList))
@@ -708,6 +708,40 @@ class UpdateStatus(webapp2.RequestHandler):
         qrySelf.put()
         time.sleep(0.2)
         self.redirect("/profile")
+
+class ManageTimetable2(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        qrySelf = User.query(User.email == user.email()).get()
+        tmonth = int(self.request.get("month"))
+        tyear = int(self.request.get("year"))
+        monthStr = datetime.date(tyear, tmonth, 1).strftime('%B')
+        dayStr = datetime.date(tyear, tmonth, 1).strftime('%A')
+        yearStr = datetime.date(tyear, tmonth, 1).strftime('%Y')
+        userMonth = []
+        # try to find calendar
+        userMonthObj = "Not Created"
+        for monthobj in qrySelf.calendar:
+            if monthobj.month == tmonth and monthobj.year == tyear:
+                userMonthObj = monthobj
+                break
+        # check if calendar is found.
+        if str(userMonthObj) == "Not Created":
+            monthobjnew = createMonthObj(tmonth, tyear)
+            qrySelf.calendar.append(monthobjnew)
+            userMonthObj = monthobjnew
+            qrySelf.put()
+        userMonth.append(str(bin(userMonthObj.w1)[2:]))
+        userMonth.append(str(bin(userMonthObj.w2)[2:]))
+        userMonth.append(str(bin(userMonthObj.w3)[2:]))
+        userMonth.append(str(bin(userMonthObj.w4)[2:]))
+        template = jinja_environment.get_template('timetable2.html')
+        self.response.out.write(template.render({"monthStr": monthStr, "userMonth": userMonth, "monthNum": tmonth, "dayStr": dayStr, "yearStr":yearStr, "yearNum":tyear}))
+
+class Test(webapp2.RequestHandler):
+    def get(self):
+        template = jinja_environment.get_template('test.html')
+        self.response.out.write(template.render())
         
 app = webapp2.WSGIApplication([
     ('/', MainPage),
@@ -723,6 +757,7 @@ app = webapp2.WSGIApplication([
     ('/viewRequest', ViewRequests),
     ('/acceptFriend', AcceptFriend),
     ('/managetimetable', ManageTimetable),
+    ('/managetimetable2', ManageTimetable2),
     ('/updatetime', UpdateTime),
     ('/createevents', CreateEvents),
     ('/processevent', ProcessEvent),
@@ -733,4 +768,5 @@ app = webapp2.WSGIApplication([
     ('/nopermission', NoPermission),
     ('/profile', Profile),
     ('/updatestatus', UpdateStatus),
+    ('/test', Test),
 ], debug=True)

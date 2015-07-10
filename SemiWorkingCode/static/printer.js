@@ -10,13 +10,17 @@ function printTimetable(lstBin,dayStr) {
                 document.write(((counter - 1) / 4) + 1);              
             }
             if (str[j] == 0) {
-                document.write("&#09;<input type='checkbox' checked = 'checked' name = ");
+                document.write("&#09;<input type='checkbox' checked = 'checked' name = '");
                 document.write(counter);
-                document.write("></input>");
+                document.write("' id = '");
+                document.write(counter - 1);
+                document.write("'></input>");
             } else {
-                document.write("&#09;<input type='checkbox' name = ");
+                document.write("&#09;<input type='checkbox' name = '");
                 document.write(counter);
-                document.write("></input>");
+                document.write("' id = '");
+                document.write(counter - 1);
+                document.write("'></input>");
             }
             if ((counter - 1) % 4 == 3){
                 document.write("(" + convertDay(dayStr, counter) + ")");
@@ -35,7 +39,8 @@ function printTimetable2(dayStr, numDayInMonth, lstBin) {
     //get first day that has not been printed
     var daysArray = ["Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     var lastDay = 29;
-    for (var i=0; daysArray[i] != dayStr; i++){
+    var numOfFirstDay = 0;
+    for (; daysArray[numOfFirstDay] != dayStr; numOfFirstDay++){
         lastDay--;
     }
     //print missing days
@@ -58,35 +63,145 @@ function printTimetable2(dayStr, numDayInMonth, lstBin) {
     var numlinesprinted = (linebreakcounter / 7) + 4;
     //second layer starts here
     document.write("</span><span class= 'layer2'><br>");
-    counter = 1;
+    //concatenate week string, then split into array of adjusted weeks.
+    var weekStr = "";
     for (i = 0; i < 4; i++) {
-        str = lstBin[i];
-        len = str.length;
-        for (var j = 1; j < len; j++) {
-            if ((counter - 1) % 4 == 0) {
-                //document.write("<br> Day ");
-                //document.write(((counter - 1) / 4) + 1);              
-            }
-            if (str[j] == 0) {
-                document.write("<img src='static/greensq50.png'>");
-                //document.write("&#09;<input type='checkbox' checked = 'checked' name = ");
-                //document.write(counter);
-                //document.write("></input>");
-            } else {
-                document.write("<img src='static/redsq50.png'>");
-                //document.write("&#09;<input type='checkbox' name = ");
-                //document.write(counter);
-                //document.write("></input>");
-            }
-            if ((counter - 1) % 4 == 3){
-                //document.write("(" + convertDay(dayStr, counter) + ")");
-            }
-            counter++;
-        }
+        weekStr += lstBin[i].substring(1);
     }
+    var tempnum = (7 - numOfFirstDay) * 4;
+    var adjustedWeeks = [weekStr.substring(0, tempnum)];
+    for (var i = 1; i < numlinesprinted; i++) {
+        if (i != numlinesprinted) {
+            adjustedWeeks.push(weekStr.substring(tempnum, tempnum + 28));
+            tempnum += 28;
+        } //last week
+        else{
+            adjustedWeeks.push(weekStr.substring(tempnum));
+        }
+        
+    }
+    printWeeksinCalendar(adjustedWeeks, numOfFirstDay);
     //shift second layer up
     var toshift = numlinesprinted + "00px"
     $(".layer2").css("bottom", toshift);
+}
+
+function printWeeksinCalendar(adjustedWeeks, firstDayNum) {
+    //print first week pt. 1
+    for (var i = firstDayNum; i > 0; i--) {   
+        document.write("<img src = 'static/slashleftsq.png'><img src = 'static/slashrightsq.png'>");
+    }
+    var week = adjustedWeeks[0]
+    for (var i = 0; i < week.length; i += 4) {
+        if (week[i] == 0) {
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(i);
+                document.write("'>");
+            } else {
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(i);
+                document.write("'>");
+            }
+        if (week[i + 1] == 0) {
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(i + 1);
+                document.write("'>");
+            } else {
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(i + 1);
+                document.write("'>");
+            }
+    }
+    document.write("<br>");
+    //print first week pt. 2
+    for (var i = firstDayNum; i > 0; i--) {   
+        document.write("<img src = 'static/slashrightsq.png'><img src = 'static/slashleftsq.png'>");
+    }
+    var week = adjustedWeeks[0]
+    for (var i = 2; i < week.length; i += 4) {
+        if (week[i] == 0) {
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(i);
+                document.write("'>");
+            } else {
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(i);
+                document.write("'>");
+            }
+        if (week[i + 1] == 0) {
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(i + 1);
+                document.write("'>");
+            } else {
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(i + 1);
+                document.write("'>");
+            }
+    }
+    var k = week.length;
+    document.write("<br>");
+    //print remaining weeks
+    for (var i = 1; i < adjustedWeeks.length; i++) {
+        week = adjustedWeeks[i]
+        for (var j = 0; j < week.length; j += 4) {
+            if (week[j] == 0) {
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(j + k);
+                document.write("'>");
+            } else {
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(j + k);
+                document.write("'>");
+            }
+            if (week[j + 1] == 0) {
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(j + 1 + k);
+                document.write("'>");
+            } else {
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(j + 1 + k);
+                document.write("'>");
+            }
+        }
+        document.write("<br>");
+        //round 2
+        for (var j = 2; j < week.length; j += 4) {
+            if (week[j] == 0) {
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(j + k);
+                document.write("'>");
+            } else {
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(j + k);
+                document.write("'>");
+                }
+            if (week[j + 1] == 0) {
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(j + 1 + k);
+                document.write("'>");
+            } else {
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write(j + 1 + k);
+                document.write("'>");
+            }
+        }
+        k += 28;
+        document.write("<br>");
+    }
+    //can insert code for printing over blanks here but should be unnecessary/damn annoying
+}
+
+function updatesq(id) {
+    var sq = document.getElementById(id);
+    var checkboxid = id.substring(2);
+    var check = document.getElementById(checkboxid);
+    if (check.checked) {
+        sq.src = "static/redsq50.png";
+        check.checked = false;
+    } else {
+        sq.src = "static/greensq50.png";
+        check.checked = true;
+    }
 }
 
 function convertDay(dayStr, counter){

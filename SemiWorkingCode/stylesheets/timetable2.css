@@ -6,9 +6,15 @@
 }
 
 .layer2{
-    position: relative;
+    /*position: relative;
     left: 0px;
     bottom: 0px;
+    z-index: 2;
+    opacity: 0.8;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+    position: absolute;
+    left: 0px;
+    top: -20px;
     z-index: 2;
     opacity: 0.8;
     filter: alpha(opacity=40); /* For IE8 and earlier */

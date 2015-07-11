@@ -94,20 +94,20 @@ function printWeeksinCalendar(adjustedWeeks, firstDayNum) {
     var week = adjustedWeeks[0]
     for (var i = 0; i < week.length; i += 4) {
         if (week[i] == 0) {
-                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(i);
                 document.write("'>");
             } else {
-                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(i);
                 document.write("'>");
             }
         if (week[i + 1] == 0) {
-                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(i + 1);
                 document.write("'>");
             } else {
-                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(i + 1);
                 document.write("'>");
             }
@@ -120,20 +120,20 @@ function printWeeksinCalendar(adjustedWeeks, firstDayNum) {
     var week = adjustedWeeks[0]
     for (var i = 2; i < week.length; i += 4) {
         if (week[i] == 0) {
-                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(i);
                 document.write("'>");
             } else {
-                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(i);
                 document.write("'>");
             }
         if (week[i + 1] == 0) {
-                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(i + 1);
                 document.write("'>");
             } else {
-                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(i + 1);
                 document.write("'>");
             }
@@ -145,20 +145,20 @@ function printWeeksinCalendar(adjustedWeeks, firstDayNum) {
         week = adjustedWeeks[i]
         for (var j = 0; j < week.length; j += 4) {
             if (week[j] == 0) {
-                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(j + k);
                 document.write("'>");
             } else {
-                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(j + k);
                 document.write("'>");
             }
             if (week[j + 1] == 0) {
-                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(j + 1 + k);
                 document.write("'>");
             } else {
-                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(j + 1 + k);
                 document.write("'>");
             }
@@ -167,20 +167,20 @@ function printWeeksinCalendar(adjustedWeeks, firstDayNum) {
         //round 2
         for (var j = 2; j < week.length; j += 4) {
             if (week[j] == 0) {
-                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(j + k);
                 document.write("'>");
             } else {
-                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(j + k);
                 document.write("'>");
                 }
             if (week[j + 1] == 0) {
-                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(j + 1 + k);
                 document.write("'>");
             } else {
-                document.write("<img src='static/redsq50.png' onclick='updatesq(id)' id = 'sq");
+                document.write("<img src='static/greensq50.png' onclick='updatesq(id)' id = 'sq");
                 document.write(j + 1 + k);
                 document.write("'>");
             }
@@ -196,10 +196,10 @@ function updatesq(id) {
     var checkboxid = id.substring(2);
     var check = document.getElementById(checkboxid);
     if (check.checked) {
-        sq.src = "static/redsq50.png";
+        sq.src = "static/greensq50.png";
         check.checked = false;
     } else {
-        sq.src = "static/greensq50.png";
+        sq.src = "static/redsq50.png";
         check.checked = true;
     }
 }

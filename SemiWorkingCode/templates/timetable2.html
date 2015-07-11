@@ -30,14 +30,16 @@
         </div>
         <div class="container">
             <div class="col-md-9">
-            <div class= "timetable">
-                <!--<p class="subheader">AM/NN/EV/PM</p>-->
-                <div class="row">
-                    <span class= "layer1">
-                        <script>printTimetable2("{{dayStr}}", {{numDayInMonth}}, {{userMonth}});</script>
-                    </span>
+                
+                <div class= "timetable">
+                    <!--<p class="subheader">AM/NN/EV/PM</p>-->
+                    <p style="font-weight:bold">Please indicate your free (green) and busy (red) days by toggling the squares below!</p>
+                    <div class="row">
+                        <span class= "layer1">
+                            <script>printTimetable2("{{dayStr}}", {{numDayInMonth}}, {{userMonth}});</script>
+                        </span>
+                    </div>
                 </div>
-            </div>
             </div>
             <div class="col-md-3">
                 <div class="row">
@@ -46,7 +48,20 @@
                 <div class="row">
                     <form class="boxes" action = "/updatetime?month={{monthNum}}&year={{yearNum}}" method = "POST">
                         <p>
-                        <input type = "submit"></input>
+                        <input type = "submit" value="Update Changes">
+                        <div class = "information">
+                            <p>1. Manage your calendar/timetable on the left.</p>
+                            <p>2. Click on each coloured squares to toggle.</p>
+                            <p>3. Remember to click "Update Changes" button above after making changes.</p>
+                            <p>4. Please update changes before switching months!</p>
+                            <!-- To be replaced by image explanation if possible for point 5-->
+                            <p>5. There are 4 boxes in 1 day: <br>
+                            Top-left is morning.<br>
+                            Top-right is afternoon.<br>
+                            Bottom-left is evening.<br>
+                            Bottom-right is night.<br>
+                            </p>                          
+                        </div>
                         <div class = "invisible">
                             <script>printTimetable({{userMonth}} , "{{dayStr}}");</script>
                         </div>

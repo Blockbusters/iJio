@@ -61,35 +61,6 @@ input[type=submit]{
     /*border: 0 none;*/  /*Only enable this if dont want the border*/
 }
 
-.words{
-    font-size: 200%;
-}
-
-.schedule{
-    font-size: 200%;
-}
-
-.link {
-    font-size: 80%;
-    color:white;
-}
-
-.map{
-    width: 400px;
-    height: 250px;
-}
-
-.space{
-    height: 80px;
-}
-
-.search{
-    background-color: #fff;
-    font-family: Roboto;
-    font-size: 15px;
-    font-weight: 300;
-    margin-left: 12px;
-    padding: 0 11px 0 13px;
-    text-overflow: ellipsis;
-    width: 280px;
+.information{
+    border: 2px solid black;
 }

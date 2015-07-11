@@ -81,9 +81,9 @@ function printTimetable2(dayStr, numDayInMonth, lstBin) {
         
     }
     printWeeksinCalendar(adjustedWeeks, numOfFirstDay);
-    //shift second layer up
-    var toshift = numlinesprinted + "00px"
-    $(".layer2").css("bottom", toshift);
+    //shift second layer up (not necessary with update to css)
+    //var toshift = numlinesprinted + "00px"
+    //$(".layer2").css("bottom", toshift);
 }
 
 function printWeeksinCalendar(adjustedWeeks, firstDayNum) {

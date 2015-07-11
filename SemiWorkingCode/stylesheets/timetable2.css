@@ -17,11 +17,11 @@
 
 .bg{
     background-color: cornflowerblue;
-    
 }
 
 .invisible{
-    visibility:hidden;
+    /*visibility:hidden;*/
+    display: none;
 }
 
 .bigName{

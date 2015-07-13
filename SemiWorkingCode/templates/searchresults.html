@@ -8,7 +8,17 @@
     <body class = "bg">       
         <div class = "main">
             <h1>Search Results</h1>
-            <p>We have found {{numFoundName}} users with name: {{ name }}</p>
+            {% if numFoundName == 0: %}
+                <p> Your search term "{{ name }}" returned no results.</p>
+            {% else: %}
+                <p>We have found {{numFoundName}} 
+                {% if numFoundName == 1: %}
+                    user 
+                {% else: %}
+                    users 
+                {% endif %}
+                with search term: {{ name }}</p>
+            {% endif %}
         </div>
         <div class = "box">
             {% for key in pair:%}

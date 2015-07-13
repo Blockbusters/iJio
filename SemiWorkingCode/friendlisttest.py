@@ -260,14 +260,15 @@ class SearchResults(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qrySelf = User.query(User.email == user.email())
-        name = self.request.get('name').title()
-        qry1 = User.query(User.name == name)
-        numFound1 = qry1.count()
+        name = self.request.get('name') # search name
+        numFound1 = 0 # number of search terms found
         pair = []
-        for key in qry1.iter():
-            email = key.email
-            case = checkAdding(email, qrySelf.get())
-            pair.append([key.name, key.email, case])  
+        for userobj in User.query(): # retrieve all users from database
+            if (name.lower() in userobj.name.lower()):
+                numFound1 += 1
+                email = userobj.email
+                case = checkAdding(email, qrySelf.get())
+                pair.append([userobj.name, email, case])
         template = jinja_environment.get_template('searchresults.html')
         self.response.out.write(template.render({"numFoundName":numFound1,"name":name, "pair":pair})) 
         

@@ -4,6 +4,16 @@
         <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
         <link type="text/css" href="/stylesheets/search.css" rel="stylesheet"/> <!-- CSS program -->
         <title>Search Friends</title>
+        <script>
+            function validateSearch() {
+                var x = document.forms["searchForm"]["name"].value;
+                if (x.trim() == "") {
+                    //alert("Please enter a proper search term!");
+                    document.getElementById('errormsg').innerHTML = "Please enter proper search term!";
+                    return false;
+                }
+            }   
+        </script>
     </head>
     <body class = "bg">       
         <div class = "main">
@@ -11,8 +21,10 @@
             <p>Who are you searching for?</p>
         </div>
         <div class = "fill">
-            <form action="/searchresults">
-                Name: <input type="text" name="name"><br><br>
+            <form name="searchForm" action="/searchresults" onsubmit="return validateSearch()" method="Get" >
+                Name: <input type="text" name="name"><br>
+                <span id="errormsg"></span>
+                <br><br>
                 <input type="submit" value="Submit">
             </form>
             <form action="/home">

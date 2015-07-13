@@ -1,26 +1,31 @@
 .bg{
-    background-color: cornflowerblue;
+    background-color: #F5FFFE;
+}
+
+.header{
+    padding-top: 20px;
+    background-color: #B3C7D0;
+}
+
+.main{
     text-align: center;
 }
-input[type=submit]{
-    padding: 15px 10px; /* Area of space (vertical, horizontal)*/
-    border-radius: 10px; /*Button Shape*/
-    width: 280px;
-    background: #47DABD; /*Button background colour*/
-    color: white; /*font color*/
-    margin-bottom: 25px;
-    /*border: 0 none;*/  /*Only enable this if dont want the border*/
+.main h1{
+    color: #61483D;
 }
 
-.header h2{
-    font-size: 14px;
-    font-style: italic;
+.body .frame tr,td{
+    border: 3px solid #B3C7D0;
 }
-
-.nav{
-    margin-top: 50px;
+.body p{
+    color: #61483D;
+}
+.body .feature{
+    width: 185px;
+    height: 190px;
 }
 
 .fb-like{
-    margin-bottom: 200px;
+    margin-top: 10px;
+    margin-left: 20px;
 }

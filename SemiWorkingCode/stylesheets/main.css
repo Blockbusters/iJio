@@ -1,9 +1,10 @@
 .bg{
     background-color: #F5FFFE;
+    font-family: 'Raleway', sans-serif;
 }
 
 .header{
-    padding-top: 20px;
+    padding-top: 0px;
     background-color: #B3C7D0;
 }
 
@@ -28,4 +29,8 @@
 .fb-like{
     margin-top: 10px;
     margin-left: 20px;
+}
+
+.hello{
+    text-align: center;
 }

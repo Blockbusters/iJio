@@ -3,10 +3,25 @@
     <head>
         <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
         <link type="text/css" href="/stylesheets/home.css" rel="stylesheet"/> <!-- CSS program -->
+        <link href='http://fonts.googleapis.com/css?family=Raleway:500' rel='stylesheet' type='text/css'>
         <title>{{name}}</title>
     </head>
     <body class = "bg">
         <div class="container">
+            <div class="header container">
+                <div class="row">
+                    <div class="col-md-1">
+                        <img src="static/plainlogo.png" width="75px" height="40px"></img>
+                    </div>
+                    <div class="col-md-8">
+                    </div>
+                        <span><a href="/manage"><img src="static/friend.png" width="50px" height="40px"></img></span></a>
+                        <span><a href="/managetimetable2?month={{month}}&year={{year}}"><img src="static/calendar.png" width="50px" height="40px"></img></span></a>
+                        <span><a href="/createevents"><img src="static/createnewevent.png" width="50px" height="40px"></img></span></a>
+                        <span><a href="/checkevents"><img src="static/event.png" width="50px" height="40px"></img></span></a>
+                    
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-3">
                 </div>
@@ -38,7 +53,6 @@
                     </form>
                 </div>
                 <div class="col-md-3">
-                    <!--ATTN NICKY! changed this to a href to add in the month not sure if it affects anything-->
                     <a href="/managetimetable2?month={{month}}&year={{year}}">
                         <input type="submit" value="Manage Timetable">
                     </a>

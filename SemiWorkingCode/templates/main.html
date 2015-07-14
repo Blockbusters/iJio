@@ -3,6 +3,8 @@
     <head>
         <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
         <link type="text/css" href="/stylesheets/main.css" rel="stylesheet"/> <!-- CSS program -->
+        <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> <!-- Load jQuery -->
+        <link href='http://fonts.googleapis.com/css?family=Raleway:500' rel='stylesheet' type='text/css'>
         <title>iJio Main Page</title>
     </head>
     <body class = "bg">
@@ -18,17 +20,30 @@
         <div class="header container">
             <div class="row">
                 <div class="col-md-2">
-                    <img src="static/plainlogo.png" width="75px" height="25px"></img>
+                    <img src="static/plainlogo.png" width="75px" height="40px"></img>
                 </div>
                 <div class="col-md-8">
                 </div>
                 <div class="col-md-1">
-                    <a href="/login"><img src="static/loginregister.png" alt="Login/Register" width="100px" height="25px"></img></a>
+                    <a href="/login"><img src="static/loginregister.png" alt="Login/Register" width="150px" height="40px"></img></a>
                 </div>
             </div>
         </div>
         <div class="main container">
-            <h1>Jio your friends for a <b>run.</b> </h1>
+            <h1>Jio your friends for a <b><span class="keyword" style="display: inline-block;">Run.</span></b> </h1>
+            <script type="text/javascript">
+        var keywords = ["Movie.", "Tour.", "Vacation.", "Day Trip.", "Cultural Experience.", "Run."];
+        var count = 1;
+        setInterval(function(){
+            $("span.keyword").fadeOut(400, function(){
+                $(this).html(keywords[count]);
+                count++;
+                if(count == keywords.length)
+                    count = 0;
+                $(this).fadeIn(400);
+            });
+        }, 3250);
+        </script>
         </div>
         <div class="body container">
             <div class="row">
@@ -60,9 +75,11 @@
                             </td>
                         </tr>
                     </table>
+                    <div class = "hello">
                     <div class="row">
                         <div class="fb-like" data-href="http://ijio-app.appspot.com" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true">
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>

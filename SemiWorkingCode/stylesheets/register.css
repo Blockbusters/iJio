@@ -1,4 +1,30 @@
-.body{
-    background-color: cornflowerblue;
-    text-align:center
+.bg{
+    background-color: #F5FFFE;
 }
+
+.header{
+    background-color: #B3C7D0;
+}
+
+.body{
+    text-align: center;
+}
+.title h1,.message p{
+    color: #61483D;
+    font-family: 'Raleway', sans-serif;
+}
+
+.input{
+    text-align: center;      
+}
+
+textarea[name=content]{
+    resize: none;
+}
+
+.btn{
+    background-color: #B3C7D0;
+    color: #61483D;
+    font-family: 'Raleway', sans-serif; 
+}
+

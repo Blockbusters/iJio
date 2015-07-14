@@ -3,6 +3,7 @@
     <head>
         <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
         <link type="text/css" href="/stylesheets/register.css" rel="stylesheet"/> <!-- CSS program -->
+        <link href='http://fonts.googleapis.com/css?family=Raleway:500' rel='stylesheet' type='text/css'>
         <title>Register</title>
         <script>
             function validateForm() {
@@ -14,18 +15,29 @@
             }   
         </script>
     </head>
-    <body class = "body">
-        <div class = "message">
-            <h1>Thank you for registering!</h1>
-            <p>Please enter your name to complete registration.
-            <p>Note: Name cannot be changed once set.
-            <p>What is your name?
+    <body class = "bg">
+        <div class="header container">
+            <div class="row">
+                <div class="col-md-2">
+                    <img src="static/plainlogo.png" width="75px" height="40px"></img>
+                </div>
+            </div>
         </div>
+        <div class="body container">
+            <div class="title">
+                <h1>Thank you for registering!</h1>
+            </div>
+            <div class = "message">
+                <p>Please enter your name to complete registration.</p>
+                <p>Note: Name cannot be changed once set.</p>
+                <p>What is your name?</p>
+            </div>
+        </div>      
         <div class = "input">
             <form name="nameForm" action ="/update" onsubmit = "return validateForm()" method="POST">
                 <textarea name="content">Firstname Lastname</textarea>
-                <p>
-                <input type="submit" value="Submit Name">
+                <p></p>
+                <input class="btn btn-primary" type="submit" value="Submit Name">
             </form>
         </div>
     </body>

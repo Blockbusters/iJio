@@ -4,6 +4,7 @@
         <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
         <link type="text/css" href="/stylesheets/home.css" rel="stylesheet"/> <!-- CSS program -->
         <link href='http://fonts.googleapis.com/css?family=Raleway:500' rel='stylesheet' type='text/css'>
+        <script type="text/javascript" src="static/header.js"></script> <!-- JavaScript program -->
         <title>{{name}}</title>
     </head>
     <body class = "bg">
@@ -11,14 +12,14 @@
             <div class="header container">
                 <div class="row">
                     <div class="col-md-1">
-                        <img src="static/plainlogo.png" width="75px" height="40px"></img>
+                        <a href="#"><img src="static/plainlogo.png" width="75px" height="40px"></img></a>
                     </div>
                     <div class="col-md-8">
                     </div>
-                        <span><a href="/manage"><img src="static/friend.png" width="50px" height="40px"></img></span></a>
+                        <span><a href="/manage"><img id = "friend" src="static/friend.png" width="50px" height="40px"></img></span></a>
                         <span><a href="/managetimetable2?month={{month}}&year={{year}}"><img src="static/calendar.png" width="50px" height="40px"></img></span></a>
                         <span><a href="/createevents"><img src="static/createnewevent.png" width="50px" height="40px"></img></span></a>
-                        <span><a href="/checkevents"><img src="static/event.png" width="50px" height="40px"></img></span></a>
+                        <span><a href="/checkevents"><img id = "event" src="static/event.png" width="50px" height="40px"></img></span></a>
                     
                 </div>
             </div>
@@ -36,6 +37,7 @@
                 {% if counter == "0": %} <!--NOTE: counter is a string -->
                     <p>You have no friend requests.</p>
                 {% else: %}
+                    <script>updateHeaderFriend();</script>
                     <p><a href="/viewRequest">You have {{counter}} friend requests.</a></p>
                 {% endif %}
                 {% if numEventReq == "0": %}

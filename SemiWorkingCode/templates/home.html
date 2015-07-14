@@ -22,6 +22,7 @@
                         <span><a href="/checkevents"><img id = "event" src="static/event.png" width="50px" height="40px"></img></span></a>
                     
                 </div>
+                <script>updateHeader({{counter}}, {{numEventReq}});</script>
             </div>
             <div class="row">
                 <div class="col-md-3">
@@ -37,7 +38,6 @@
                 {% if counter == "0": %} <!--NOTE: counter is a string -->
                     <p>You have no friend requests.</p>
                 {% else: %}
-                    <script>updateHeaderFriend();</script>
                     <p><a href="/viewRequest">You have {{counter}} friend requests.</a></p>
                 {% endif %}
                 {% if numEventReq == "0": %}

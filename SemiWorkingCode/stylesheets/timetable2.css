@@ -22,7 +22,8 @@
 
 
 .bg{
-    background-color: cornflowerblue;
+    background-color: #F5FFFE;
+    font-family: 'Raleway', sans-serif;
 }
 
 .invisible{
@@ -39,11 +40,12 @@ button{
     padding: 15px 10px; /* Area of space (vertical, horizontal)*/
     border-radius: 10px; /*Button Shape*/
     width: 280px;
-    background: #47DABD; /*Button background colour*/
-    color: white; /*font color*/
-    margin-bottom: 20px;
-    /*border: 0 none;*/  /*Only enable this if dont want the border*/
+    background: Transparent; /*Button background colour*/
+    color: #61483D; /*font color*/
+    margin-bottom: 25px;
+    border-color: #B3C7D0;
 }
+
 .disabled{
     background:#dddddd;
     color:gray;
@@ -55,12 +57,18 @@ input[type=submit]{
     padding: 15px 10px; /* Area of space (vertical, horizontal)*/
     border-radius: 10px; /*Button Shape*/
     width: 280px;
-    background: #47DABD; /*Button background colour*/
-    color: white; /*font color*/
+    background: Transparent; /*Button background colour*/
+    color: #61483D; /*font color*/
     margin-bottom: 25px;
-    /*border: 0 none;*/  /*Only enable this if dont want the border*/
+    border-color: #B3C7D0;
 }
+
 
 .information{
     border: 2px solid black;
+}
+
+.header{
+    padding-top: 0px;
+    background-color: #B3C7D0;
 }

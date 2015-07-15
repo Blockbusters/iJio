@@ -26,102 +26,100 @@
         </script>
     </head>
     <body class = "bg">
-        <div class="container">
-            <div class="header container">
-                <div class="row">
-                    <div class="col-md-1">
-                        <a href="/home"><img src="static/plainlogo.png" width="75px" height="40px"></img></a>
-                    </div>
-                    <div class="col-md-8">
-                    </div>
-                        <span><a href="/manage"><img id = "friend" src="static/friend.png" width="50px" height="40px"></img></span></a>
-                        <span><a href="/managetimetable2?month={{month}}&year={{year}}"><img src="static/calendar.png" width="50px" height="40px"></img></span></a>
-                        <span><a href="/createevents"><img src="static/createnewevent.png" width="50px" height="40px"></img></span></a>
-                        <span><a href="/checkevents"><img id = "event" src="static/event.png" width="50px" height="40px"></img></span></a>
-                    
+        <div class="header container">
+            <div class="row">
+                <div class="col-md-1">
+                    <a href="/home"><img src="static/plainlogo.png" width="75px" height="40px"></img></a>
                 </div>
-                <script>updateHeader({{counter}}, {{numEventReq}});</script>
-        </div>
-        <div class = "main">
-                <h1>Create Events</h1>
+                <div class="col-md-8">
+                </div>
+                <span><a href="/manage"><img id = "friend" src="static/friend.png" width="50px" height="40px"></img></span></a>
+                <span><a href="/managetimetable2?month={{month}}&year={{year}}"><img src="static/calendar.png" width="50px" height="40px"></img></span></a>
+                <span><a href="/createevents"><img src="static/createnewevent.png" width="50px" height="40px"></img></span></a>
+                <span><a href="/checkevents"><img id = "event" src="static/event.png" width="50px" height="40px"></img></span></a>    
             </div>
-            <div class = "event">
-                <form name = "myForm" action="/processevent" onsubmit="return validateForm()" method = "POST"> 
+            <script>updateHeader({{counter}}, {{numEventReq}});</script>
+        </div>
+        <div class = "main container">
+            <h1>Create Events</h1>
+        </div>
+        <div class = "event container">
+            <form name = "myForm" action="/processevent" onsubmit="return validateForm()" method = "POST"> 
                 <!--All buttons within this form must be button type="button" or others, CANNOT BE blank or "submit"
                 as this will redirect straight to /processevent upon clicking that button-->
-                    <div class = "invisible">
-                        <textarea readonly name="hiddeninvite" id="hiddeninvite" style="width:0px; height: 0px;"></textarea>
+                <div class = "invisible">
+                    <textarea readonly name="hiddeninvite" id="hiddeninvite" style="width:0px; height: 0px;"></textarea>
+                </div>
+                <div class="row">
+                    <div class ="col-md-2">
+                        <h3> Who to invite: </h3>
                     </div>
-                    <div class="row">
-                        <div class ="col-md-2">
-                            <h3> Who to invite: </h3>
+                    <div class="col-md-4">
+                        <textarea readonly name="invite" id="invite" style="width:380px; height 60px;">No friends</textarea>
+                    </div>
+                    <div class="col-md-3">   
+                        <button type="button" class="click" id="friendbtn">Friend List</button>
+                        <ul class="friendmenu" id="friendmenu">
+                            {% for pengyou in friendlist: %}
+                                <li class="friend" id = {{pengyou[1]}}><a href="#">{{pengyou[0]}} ({{pengyou[2]}})</a><img src="static/tick.png"></img></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class ="col-md-2">
+                        <h3> Specify date range: </h3>
+                    </div>
+                    <div class="col-md-1">
+                        <h4>Start Date:</h4>
+                    </div>
+                    <div class="col-md-2">
+                        <input name="datestart" class="datepicker-start" type="text">
+                    </div>
+                    <div class="col-md-1">   
+                        <h4>End Date:</h4>
+                    </div>
+                    <div class="col-md-2">
+                        <input name="dateend" class="datepicker-end" type="text">
+                    </div>
+                </div><p></p>
+                <div class="row">
+                    <div class ="col-md-2">
+                        <div class="row">
+                            <h3> Event Name: </h3>
                         </div>
-                        <div class="col-md-4">
-                            <textarea readonly name="invite" id="invite" style="width:380px; height 60px;">No friends</textarea>
+                        <div class="row">
+                            <h3> Event Location: </h3>
                         </div>
-                        <div class="col-md-3">   
-                            <button type="button" class="click" id="friendbtn">Friend List</button>
-                            <ul class="friendmenu" id="friendmenu">
-                                {% for pengyou in friendlist: %}
-                                    <li class="friend" id = {{pengyou[1]}}><a href="#">{{pengyou[0]}} ({{pengyou[2]}})</a><img src="static/tick.png"></img></li>
-                                {% endfor %}
-                            </ul>
+                        <div class="row">
+                            <h3> Event description: <br>
+                            (optional)</h3>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class ="col-md-2">
-                            <h3> Specify date range: </h3>
+                    <div class="col-md-4">
+                        <div class="row">
+                            <input type="text" name="eventname" style="width:380px;margin-top: 12px;" required><p>
                         </div>
-                        <div class="col-md-1">
-                            <h4>Start Date:</h4>
+                        <div class="row">
+                            <input type="text" name="eventloc" style="width:380px;margin-top: 12px;" required><p>
                         </div>
-                        <div class="col-md-2">
-                            <input name="datestart" class="datepicker-start" type="text">
+                        <div class="row">
+                            <textarea name="descr" style="width:380px; height 100px;margin-top: 10px;"></textarea>
                         </div>
-                        <div class="col-md-1">   
-                            <h4>End Date:</h4>
-                        </div>
-                        <div class="col-md-2">
-                            <input name="dateend" class="datepicker-end" type="text">
-                        </div>
-                    </div><p>
-                    <div class="row">
-                        <div class ="col-md-2">
-                            <div class="row">
-                                <h3> Event Name: </h3>
-                            </div>
-                            <div class="row">
-                                <h3> Event Location: </h3>
-                            </div>
-                            <div class="row">
-                                <h3> Event description: <br>
-                                (optional)</h3>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="row">
-                                <input type="text" name="eventname" style="width:380px;margin-top: 12px;" required><p>
-                            </div>
-                            <div class="row">
-                                <input type="text" name="eventloc" style="width:380px;margin-top: 12px;" required><p>
-                            </div>
-                            <div class="row">
-                                <textarea name="descr" style="width:380px; height 100px;margin-top: 10px;"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <!--<img width="380px" height="175px" src="/static/iJio cover.jpg"></img>-->
-                        </div>
-                    </div>           
-                    <p><div class="row">
-                        <div class="col-md-2">
-                        </div>
-                        <div class="col-md-3">
-                            <button type="submit" class="click">Create Event</button>
-                        </div>
-                        <div class="col-md-3">
-                            <button type="button" class="click" method="get" onClick="location.href='/home' ">Cancel</button>
-                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <!--<img width="380px" height="175px" src="/static/iJio cover.jpg"></img>-->
+                    </div>
+                </div>           
+                <p></p>
+                <div class="row">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="click">Create Event</button>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="click" method="get" onClick="location.href='/home' ">Cancel</button>
                     </div>
                 </div>
             </form>

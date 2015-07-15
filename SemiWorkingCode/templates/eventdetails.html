@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link href='http://fonts.googleapis.com/css?family=Raleway:500' rel='stylesheet' type='text/css'>
         <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
         <link type="text/css" href="/stylesheets/timetable.css" rel="stylesheet"/> <!-- CSS program -->
         <title>{{e[2]}}</title>
-        <script type = "text/javascript" src = "static/printer.js"></script>  
-        <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> <!-- Load jQuery -->
-		<script type="text/javascript" src="static/eventdetails.js"></script> <!-- JavaScript program -->        
+        <script type="text/javascript" src="static/header.js"></script> <!-- JavaScript program -->
+        <script type = "text/javascript" src = "static/printer.js"></script>        
         <!-- Google Map Script -->
         <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
         <script>
@@ -18,8 +18,8 @@
         });
 
         var defaultBounds = new google.maps.LatLngBounds(
-                new google.maps.LatLng(-33.8902, 151.1759),
-                new google.maps.LatLng(-33.8474, 151.2631));
+                new google.maps.LatLng(1.3100, 103.8000),
+                new google.maps.LatLng(1.4400, 103.8500));
         map.fitBounds(defaultBounds);
 
           // Create the search box and link it to the UI element.
@@ -84,7 +84,22 @@
     </head>
     <body class = 'bg'>
         <div class = "container">
-            <div class = "bigName">
+            <div class="header container">
+                <div class="row">
+                    <div class="col-md-1">
+                        <a href="/home"><img src="static/plainlogo.png" width="75px" height="40px"></img></a>
+                    </div>
+                    <div class="col-md-8">
+                    </div>
+                        <span><a href="/manage"><img id = "friend" src="static/friend.png" width="50px" height="40px"></img></span></a>
+                        <span><a href="/managetimetable2?month={{month}}&year={{year}}"><img src="static/calendar.png" width="50px" height="40px"></img></span></a>
+                        <span><a href="/createevents"><img src="static/createnewevent.png" width="50px" height="40px"></img></span></a>
+                        <span><a href="/checkevents"><img id = "event" src="static/event.png" width="50px" height="40px"></img></span></a>
+                    
+                </div>
+                <script>updateHeader({{counter}}, {{numEventReq}});</script>
+        </div>
+        <div class = "bigName">
                 {{e[2]}}
             </div>
             <div class="row">

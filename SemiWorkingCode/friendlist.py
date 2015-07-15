@@ -718,8 +718,10 @@ class Profile(webapp2.RequestHandler):
         qrySelf = User.query(User.email == email).get()
         name = qrySelf.name
         status = qrySelf.status
+        numFriends = str(len(qrySelf.friendRequestList))
+        numEventReq = str(len(qrySelf.eventList))
         template = jinja_environment.get_template('profile.html')
-        self.response.out.write(template.render({'name': name, 'email': email, 'status':status, "month":monthNow, "year":yearNow}))
+        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq,'name': name, 'email': email, 'status':status, "month":monthNow, "year":yearNow}))
 
 class UpdateStatus(webapp2.RequestHandler):
     def post(self):

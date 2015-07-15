@@ -1,24 +1,34 @@
-.body{
-    background-color: cornflowerblue;
-    text-align:center
+.bg{
+    background-color: #F5FFFE;
+    font-family: 'Raleway', sans-serif;
+}
+
+.header{
+    padding-top: 0px;
+    background-color: #B3C7D0;
 }
 .main h1{
+    color: #61483D;
     font-size: 50px;
-    text-decoration: underline;
+    text-align: center;
 }
-.main p{
+.body .frame{
+    text-align: center;
+    margin: auto;
+}
+.body .frame tr,td{
+    border: 3px solid #B3C7D0;
     font-size: 20px;
-    padding-right: 50px;
-    margin-left: auto;
-    margin-right: auto;
-    border: 2px solid black;
+}
+.navigate{
+    padding-top: 10px;
 }
 
 .navigate .click{
-    background-color: #47DABD;
+    background: Transparent; /*Button background colour*/
+    color: #61483D; /*font color*/
     border-radius: 10px;/*Button Shape*/
     padding: 15px 10px; /* Area of space (vertical, horizontal)*/
     width: 280px;
-    color: white;
     margin-bottom: 25px;
 }

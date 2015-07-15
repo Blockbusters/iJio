@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link href='http://fonts.googleapis.com/css?family=Raleway:500' rel='stylesheet' type='text/css'>
         <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
+        <script type="text/javascript" src="static/header.js"></script> <!-- JavaScript program -->
         <link type="text/css" href="/stylesheets/profile.css" rel="stylesheet"/> <!-- CSS program -->
          <link href='http://fonts.googleapis.com/css?family=Raleway:500' rel='stylesheet' type='text/css'>
         <title>Profile</title>
@@ -25,12 +27,21 @@
     </head>
     <body class = "bg">
         <div class="header container">
-            <div class="row">
-                <div class="col-md-1">
-                    <img src="static/plainlogo.png" width="75px" height="40px"></img>
+                <div class="row">
+                    <div class="col-md-1">
+                        <a href="/home"><img src="static/plainlogo.png" width="75px" height="40px"></img></a>
+                    </div>
+                    <div class="col-md-8">
+                    </div>
+                        <span><a href="/manage"><img id = "friend" src="static/friend.png" width="50px" height="40px"></img></span></a>
+                        <span><a href="/managetimetable2?month={{month}}&year={{year}}"><img src="static/calendar.png" width="50px" height="40px"></img></span></a>
+                        <span><a href="/createevents"><img src="static/createnewevent.png" width="50px" height="40px"></img></span></a>
+                        <span><a href="/checkevents"><img id = "event" src="static/event.png" width="50px" height="40px"></img></span></a>
+                    
                 </div>
-            </div>
+                <script>updateHeader({{counter}}, {{numEventReq}});</script>
         </div>
+        
         <div class="body container">
             <h1> Your profile</h1>
             <div class="information">

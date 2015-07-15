@@ -1,47 +1,35 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html>
     <head>
-    <title>{{monthStr}} {{yearStr}}</title>
-    <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
-    <link type="text/css" href="/stylesheets/timetable.css" rel="stylesheet"/> <!-- CSS program -->
-    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> <!-- Load jQuery -->
-    <script type="text/javascript" src="static/timetable.js"></script> <!-- JavaScript program -->
-    <script type = "text/javascript" src = "static/printer.js"></script>
+        <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
+        <link type="text/css" href="/stylesheets/timetable2.css" rel="stylesheet"/> <!-- CSS program -->
+        <title>Test</title>
+        <script type = "text/javascript" src = "static/printer.js"></script>        
     </head>
     <body class = 'bg'>
-        <div class="container">
+        <div class = "container">
             <div class = "bigName">
-                {{monthStr}} {{yearStr}}
+                Test #1
             </div>
-            <br>
-            {% if monthNum == 1 and yearNum == 2015: %} 
-                <a href = "#"><button disabled class="disabled">Let the past be the past, do not look back, look forward!</button></a>
-                <a href = "/managetimetable?month=2&year=2015"><button>Next Month</button></a>
-            {% elif monthNum == 1: %} 
-                <a href = "/managetimetable?month=12&year={{yearNum - 1}}"><button>Previous Month</button></a>
-                <a href = "/managetimetable?month=2&year={{yearNum}}"><button>Next Month</button></a>
-            {% elif monthNum < 12: %} 
-                <a href = "/managetimetable?month={{monthNum - 1}}&year={{yearNum}}"><button>Previous Month</button></a>
-                <a href = "/managetimetable?month={{monthNum + 1}}&year={{yearNum}}"><button>Next Month</button></a>
-            {% elif monthNum == 12: %}
-                <a href = "/managetimetable?month=11&year={{yearNum}}"><button>Previous Month</button></a>
-                <a href = "/managetimetable?month=1&year={{yearNum + 1}}"><button>Next Month</button></a>
-            {% endif %}
-            <div class= "timetable">
-                <p class="subheader">AM/NN/EV/PM</p>
-                <div class="row">
-                    <div class="col-md-5">
-                    </div>
-                    <div class="col-md-3">
-                        <form class="boxes" action = "/updatetime?month={{monthNum}}&year={{yearNum}}" method = "POST">
-                            <script>printTimetable({{userMonth}} , "{{dayStr}}");</script>
-                            <p></p>
-                            <input type = "submit"></input>
-                        </form>
-                        <button method="get" onClick="location.href='/home' ">Back to Home Page</button>
-                    </div>
+            <div class="row">
+                <div class="col-md-12">
+                        <img src="static/Day.png">
+                        <br><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png">
+                        <br><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png"><img src="static/greensq50.png">
+                </div>
+                <div class="col-md-4">
                 </div>
             </div>
-        </div>
+            <div class="space"></div>
+            <div class = "row">
+                <div class="col-md-3"></div>
+                <div class="col-md-3">
+                    <button method="get" onClick="location.href='/checkevents' ">Back to Events</button>
+                </div>
+                <div class="col-md-3">
+                    <button method="get" onClick="location.href='/home' ">Back to Home Page</button>
+                <div>
+            </div>
+        </div>      
     </body>
 </html>

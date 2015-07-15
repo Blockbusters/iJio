@@ -198,7 +198,7 @@ class ManageFriends(webapp2.RequestHandler):
         count = 1
         for friend in qrySelf.get().friendList:
             qryFriend = User.query(User.email == friend).get()
-            friendListPrint.append(str(count) + ") Name: " + qryFriend.name + ", Email: " + friend + ", Status: " + str(qryFriend.status))
+            friendListPrint.append(json.dumps("Name: " + qryFriend.name + "<br> Email: " + friend + "<br> Status: " + str(qryFriend.status)))
             count += 1
         template = jinja_environment.get_template('friendlist.html')
         self.response.out.write(template.render({"printList" : friendListPrint}))

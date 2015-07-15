@@ -1,6 +1,15 @@
-.body{
-    background-color: cornflowerblue;
+.bg{
+    background-color: #F5FFFE;
+    font-family: 'Raleway', sans-serif;
+    text-align: center;
+    
 }
+
+.header{
+    padding-top: 0px;
+    background-color: #B3C7D0;
+}
+
 .main h1{
     text-decoration: underline;
     text-align:center;
@@ -26,12 +35,13 @@
 }
 
 .event .click{
-    background-color: #47DABD;
-    border-radius: 10px;/*Button Shape*/
     padding: 15px 10px; /* Area of space (vertical, horizontal)*/
+    border-radius: 10px; /*Button Shape*/
     width: 280px;
-    color: white;
-    margin-bottom: 5px;
+    background: Transparent; /*Button background colour*/
+    color: #61483D; /*font color*/
+    margin-bottom: 25px;
+    border-color: #B3C7D0;
 }
 
 .friendmenu{
@@ -41,7 +51,7 @@
 	padding:0;
     padding-bottom: 50px;
     border: 1px solid #fff;
-    background-color: #47DABD;
+    background-color: #B3C7D0;
     z-index: 100; /*High z-index brings it to front, lower z-index will be bring to back*/
 }
 
@@ -54,7 +64,7 @@
 }
 
 .friendmenu li a:link, .friendmenu li a:visited{
-    color: white;
+    color: #F5FFFE;
     width: auto;
 }
 

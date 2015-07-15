@@ -171,7 +171,7 @@ class HomePage(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qry = User.query(User.email == user.email())
-        self.response.write(FUNTIME)
+        # self.response.write(FUNTIME)
         name = qry.get().name
         numFriends = str(len(qry.get().friendRequestList))
         numEventReq = str(len(qry.get().eventList))
@@ -201,13 +201,12 @@ class ManageFriends(webapp2.RequestHandler):
         numFriends = str(len(qrySelf.get().friendRequestList))
         numEventReq = str(len(qrySelf.get().eventList))
         template = jinja_environment.get_template('friendlist.html')
-        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "printList" : friendListPrint}))
+        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "printList" : friendListPrint, "month":monthNow, "year":yearNow}))
 
 class ViewRequests(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         qrySelf = User.query(User.email == user.email())
-        numRequests = len(qrySelf.get().friendRequestList)
         requestList = []
         index = False
         for friend in qrySelf.get().friendRequestList:
@@ -221,7 +220,7 @@ class ViewRequests(webapp2.RequestHandler):
         numFriends = str(len(qrySelf.get().friendRequestList))
         numEventReq = str(len(qrySelf.get().eventList))
         template = jinja_environment.get_template('viewrequests.html')
-        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "counter" : numRequests, "requestList" : requestList}))
+        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "requestList" : requestList, "month":monthNow, "year":yearNow}))
         
 class AcceptFriend(webapp2.RequestHandler):
     def get(self):
@@ -238,14 +237,14 @@ class AcceptFriend(webapp2.RequestHandler):
         time.sleep(0.2)
         self.redirect("/viewRequest")
        
-class Search(webapp2.RequestHandler):
+class Search(webapp2.RequestHandler): 
     def get(self):
         user = users.get_current_user()
         qrySelf = User.query(User.email == user.email())
         numFriends = str(len(qrySelf.get().friendRequestList))
         numEventReq = str(len(qrySelf.get().eventList))
         template = jinja_environment.get_template('search.html')
-        self.response.out.write(template.render())
+        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "month":monthNow, "year":yearNow}))
 
 #check if person has already been added
 def checkAdding(personEmail, user):
@@ -278,7 +277,7 @@ class SearchResults(webapp2.RequestHandler):
         numFriends = str(len(qrySelf.get().friendRequestList))
         numEventReq = str(len(qrySelf.get().eventList))
         template = jinja_environment.get_template('searchresults.html')
-        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "numFoundName":numFound1,"name":name, "pair":pair})) 
+        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "numFoundName":numFound1,"name":name, "pair":pair, "month":monthNow, "year":yearNow})) 
         
 class AddFriend(webapp2.RequestHandler):
     def get(self):
@@ -322,7 +321,7 @@ class ManageTimetable(webapp2.RequestHandler):
         numFriends = str(len(qrySelf.friendRequestList))
         numEventReq = str(len(qrySelf.eventList))
         template = jinja_environment.get_template('timetable.html')
-        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "monthStr": monthStr, "userMonth": userMonth, "monthNum": tmonth, "dayStr": dayStr, "yearStr":yearStr, "yearNum":tyear}))
+        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "monthStr": monthStr, "userMonth": userMonth, "monthNum": tmonth, "dayStr": dayStr, "yearStr":yearStr, "yearNum":tyear, "month":monthNow, "year":yearNow}))
         
 class UpdateTime(webapp2.RequestHandler):
     def post(self):
@@ -388,7 +387,7 @@ class CreateEvents(webapp2.RequestHandler):
         numFriends = str(len(qrySelf.friendRequestList))
         numEventReq = str(len(qrySelf.eventList))
         template = jinja_environment.get_template('createevents.html')
-        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "friendlist":friendList}))
+        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "friendlist":friendList, "month":monthNow, "year":yearNow}))
         
 class ProcessEvent(webapp2.RequestHandler):
     def post(self):
@@ -425,7 +424,7 @@ class ProcessEvent(webapp2.RequestHandler):
         numFriends = str(len(qrySelf.friendRequestList))
         numEventReq = str(len(qrySelf.eventList))
         template = jinja_environment.get_template('processevent.html')
-        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "eventname": eventname, "eventloc": eventloc , "invited": invite , "startdate": start , "enddate": end , "description": description}))
+        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "eventname": eventname, "eventloc": eventloc , "invited": invite , "startdate": start , "enddate": end , "description": description, "month":monthNow, "year":yearNow}))
         self.response.write(BACKHOME)
 
 def listifyEvent(e, abbr):
@@ -473,7 +472,7 @@ class CheckEvent(webapp2.RequestHandler):
         numFriends = str(len(qrySelf.friendRequestList))
         numEventReq = str(len(qrySelf.eventList))
         template = jinja_environment.get_template('checkevents.html')
-        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "eLst": eventList, "aeLst": acceptedList}))
+        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "eLst": eventList, "aeLst": acceptedList, "month":monthNow, "year":yearNow}))
         self.response.write(BACKHOME)
 
 class EventDetails(webapp2.RequestHandler):
@@ -494,7 +493,7 @@ class EventDetails(webapp2.RequestHandler):
         numFriends = str(len(qrySelf.friendRequestList))
         numEventReq = str(len(qrySelf.eventList))
         template = jinja_environment.get_template('eventdetails.html')
-        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, 'e': event, 'status': status}))
+        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, 'e': event, 'status': status, "month":monthNow, "year":yearNow}))
      
 class AttendEvent(webapp2.RequestHandler):
     def get(self):
@@ -548,7 +547,7 @@ class AttendEvent(webapp2.RequestHandler):
         numFriends = str(len(qrySelf.friendRequestList))
         numEventReq = str(len(qrySelf.eventList))
         template = jinja_environment.get_template('eventdetails.html')
-        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, 'e': event, 'status': status}))
+        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, 'e': event, 'status': status, "month":monthNow, "year":yearNow}))
 
 class BestDay(webapp2.RequestHandler):
     def get(self):
@@ -666,7 +665,7 @@ class BestDay(webapp2.RequestHandler):
         numFriends = str(len(qrySelf.friendRequestList))
         numEventReq = str(len(qrySelf.eventList))
         template = jinja_environment.get_template('eventdetails.html')
-        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "counter":numFriends, "numEventReq":numEventReq, 'e': event, 'status': status}))
+        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "counter":numFriends, "numEventReq":numEventReq, 'e': event, 'status': status, "month":monthNow, "year":yearNow}))
  
 # Returns best day as a 9 digit integer in ddmmyyyyt format, dd = day, mm = month, yyyy = year, t = time (0,1,2,3) 
 # Returns -1 is no free day found.
@@ -720,7 +719,7 @@ class Profile(webapp2.RequestHandler):
         name = qrySelf.name
         status = qrySelf.status
         template = jinja_environment.get_template('profile.html')
-        self.response.out.write(template.render({'name': name, 'email': email, 'status':status}))
+        self.response.out.write(template.render({'name': name, 'email': email, 'status':status, "month":monthNow, "year":yearNow}))
 
 class UpdateStatus(webapp2.RequestHandler):
     def post(self):
@@ -762,7 +761,7 @@ class ManageTimetable2(webapp2.RequestHandler):
         numFriends = str(len(qrySelf.friendRequestList))
         numEventReq = str(len(qrySelf.eventList))
         template = jinja_environment.get_template('timetable2.html')
-        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "monthStr": monthStr, "userMonth": userMonth, "monthNum": tmonth, "dayStr": dayStr, "yearStr":yearStr, "yearNum":tyear, "numDayInMonth": numDayInMonth}))
+        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "monthStr": monthStr, "userMonth": userMonth, "monthNum": tmonth, "dayStr": dayStr, "yearStr":yearStr, "yearNum":tyear, "numDayInMonth": numDayInMonth, "month":monthNow, "year":yearNow}))
 
 class Test(webapp2.RequestHandler):
     def get(self):

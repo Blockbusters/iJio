@@ -1,24 +1,27 @@
 .bg{
-    background-color: cornflowerblue;
+    background-color: #F5FFFE;
+    font-family: 'Raleway', sans-serif;
     text-align: center;
 }
 
 .click{
-    background-color: #47DABD;
-    border-radius: 10px;/*Button Shape*/
     padding: 15px 10px; /* Area of space (vertical, horizontal)*/
+    border-radius: 10px; /*Button Shape*/
     width: 280px;
-    color: white;
+    background: Transparent; /*Button background colour*/
+    color: #61483D; /*font color*/
     margin-bottom: 25px;
+    border-color: #B3C7D0;
 }
 
 .accFriend{
-    background-color: #47DABD;
-    border-radius: 10px;/*Button Shape*/
     padding: 15px 10px; /* Area of space (vertical, horizontal)*/
+    border-radius: 10px; /*Button Shape*/
     width: 140px;
-    color: white;
+    background: Transparent; /*Button background colour*/
+    color: #61483D; /*font color*/
     margin-bottom: 25px;
+    border-color: #B3C7D0;
 }
 
 .main h1{
@@ -28,4 +31,9 @@
 .main h2{
     font-size: 23px;
     text-decoration: underline;
+}
+
+.header{
+    padding-top: 0px;
+    background-color: #B3C7D0;
 }

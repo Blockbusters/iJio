@@ -30,21 +30,19 @@
     </head>
     <body class = "bg">
         <div class="header container">
-                <div class="row">
-                    <div class="col-md-1">
-                        <a href="/home"><img src="static/plainlogo.png" width="75px" height="40px"></img></a>
-                    </div>
-                    <div class="col-md-8">
-                    </div>
-                        <span><a href="/manage"><img id = "friend" src="static/friend.png" width="50px" height="40px"></img></span></a>
-                        <span><a href="/managetimetable2?month={{month}}&year={{year}}"><img src="static/calendar.png" width="50px" height="40px"></img></span></a>
-                        <span><a href="/createevents"><img src="static/createnewevent.png" width="50px" height="40px"></img></span></a>
-                        <span><a href="/checkevents"><img id = "event" src="static/event.png" width="50px" height="40px"></img></span></a>
-                    
+            <div class="row">
+                <div class="col-md-1">
+                    <a href="/home"><img src="static/plainlogo.png" width="75px" height="40px"></img></a>
                 </div>
-                <script>updateHeader({{counter}}, {{numEventReq}});</script>
-        </div>
-        
+                <div class="col-md-8">
+                </div>
+                <span><a href="/manage"><img id = "friend" src="static/friend.png" width="50px" height="40px"></img></span></a>
+                <span><a href="/managetimetable2?month={{month}}&year={{year}}"><img src="static/calendar.png" width="50px" height="40px"></img></span></a>
+                <span><a href="/createevents"><img src="static/createnewevent.png" width="50px" height="40px"></img></span></a>
+                <span><a href="/checkevents"><img id = "event" src="static/event.png" width="50px" height="40px"></img></span></a>    
+            </div>
+            <script>updateHeader({{counter}}, {{numEventReq}});</script>
+        </div>  
         <div class="body container">
             <div class = "main">
                 <h1>Friend List</h1>

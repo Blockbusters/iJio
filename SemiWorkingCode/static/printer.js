@@ -332,7 +332,9 @@ function printE(lstEvent, status) {
         button.className += "disabled";
         button.disabled = true;
         var link = document.getElementById("best");
-        link.href= "#";
+        link.onclick ="location.href='#'";
+        link.className += "disabled";
+        link.disabled = true;
     }
     
 }

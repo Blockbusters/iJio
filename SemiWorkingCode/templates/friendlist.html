@@ -3,6 +3,7 @@
     <head>
         <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
         <link type="text/css" href="/stylesheets/friendlist.css" rel="stylesheet"/> <!-- CSS program -->
+        <script type="text/javascript" src="static/header.js"></script> <!-- JavaScript program -->
         <link href='http://fonts.googleapis.com/css?family=Raleway:500' rel='stylesheet' type='text/css'>
         <script type="text/javascript">
             function printFriends(printList){ 
@@ -29,15 +30,21 @@
     </head>
     <body class = "bg">
         <div class="header container">
-            <div class="row">
-                <div class="col-md-1">
-                    <a href="/home"><img src="static/plainlogo.png" width="75px" height="40px"></img></a>
+                <div class="row">
+                    <div class="col-md-1">
+                        <a href="/home"><img src="static/plainlogo.png" width="75px" height="40px"></img></a>
+                    </div>
+                    <div class="col-md-8">
+                    </div>
+                        <span><a href="/manage"><img id = "friend" src="static/friend.png" width="50px" height="40px"></img></span></a>
+                        <span><a href="/managetimetable2?month={{month}}&year={{year}}"><img src="static/calendar.png" width="50px" height="40px"></img></span></a>
+                        <span><a href="/createevents"><img src="static/createnewevent.png" width="50px" height="40px"></img></span></a>
+                        <span><a href="/checkevents"><img id = "event" src="static/event.png" width="50px" height="40px"></img></span></a>
+                    
                 </div>
-                <div class="col-md-8">
-                </div>
-                <!-- This space reserved for icons -->    
-            </div>
+                <script>updateHeader({{counter}}, {{numEventReq}});</script>
         </div>
+        
         <div class="body container">
             <div class = "main">
                 <h1>Friend List</h1>

@@ -3,15 +3,50 @@
     <head>
         <link type="text/css" href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap (custom classes) -->
         <link type="text/css" href="/stylesheets/friendlist.css" rel="stylesheet"/> <!-- CSS program -->
+        <link href='http://fonts.googleapis.com/css?family=Raleway:500' rel='stylesheet' type='text/css'>
+        <script type="text/javascript">
+            function printFriends(printList){ 
+                var printIndex = 0;
+                for (friend in printList){
+                    if (printIndex % 2 == 0){
+                        document.write('<tr><td colspan="2">');
+                        document.write(printList[friend].substring(1,printList[friend].length-1));
+                        document.write('</td>');
+                    }
+                    else{
+                        document.write('<td colspan="2">');
+                        document.write(printList[friend].substring(1,printList[friend].length-1));
+                        document.write('</td></tr>');
+                    }
+                    printIndex++;
+                }
+                if (printIndex % 2 == 1){
+                    document.write("</tr>");
+                }
+            }
+        </script>
         <title>Friends</title>
     </head>
-    <body class = "body">
-        <div class="container">
+    <body class = "bg">
+        <div class="header container">
+            <div class="row">
+                <div class="col-md-1">
+                    <a href="/home"><img src="static/plainlogo.png" width="75px" height="40px"></img></a>
+                </div>
+                <div class="col-md-8">
+                </div>
+                <!-- This space reserved for icons -->    
+            </div>
+        </div>
+        <div class="body container">
             <div class = "main">
                 <h1>Friend List</h1>
-                {% for friend in printList: %}
-                    <p>{{ friend }}</p>
-                {% endfor %}
+                <table class="frame" width="75%">
+                    <tr>
+                        <td colspan="4" >You have {{ printList|count }} friend(s).</td>
+                    </tr>
+                    <script> printFriends({{printList}})</script>
+                </table>
             </div>
             <div class = "navigate">
                 <div class="row">

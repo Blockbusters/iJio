@@ -69,6 +69,7 @@ class Event(ndb.Model):
     location = ndb.StringProperty(indexed=False)
     description = ndb.StringProperty(indexed=False)
     dateRange = ndb.StringProperty(repeated=True) # pair of start and end date
+    customMask = ndb.StringProperty(repeated=False)
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
@@ -388,6 +389,14 @@ class CreateEvents(webapp2.RequestHandler):
         numEventReq = str(len(qrySelf.eventList))
         template = jinja_environment.get_template('createevents.html')
         self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "friendlist":friendList, "month":monthNow, "year":yearNow}))
+
+# Appends 0 if check is "on" (checked in checkbox), appends 1 otherwise to the mask.
+def appendCustomMask(check, mask):
+    if check == "on":
+        mask = mask + "0"
+    else:
+        mask = mask + "1"
+    return mask
         
 class ProcessEvent(webapp2.RequestHandler):
     def post(self):
@@ -405,6 +414,16 @@ class ProcessEvent(webapp2.RequestHandler):
         eventID = qryCounter.count
         qryCounter.count += 1
         qryCounter.put()
+        # Process customization of event
+        customMask = ""
+        checked = self.request.get("noAM")
+        customMask = appendCustomMask(checked, customMask)
+        checked = self.request.get("noNN")
+        customMask = appendCustomMask(checked, customMask)
+        checked = self.request.get("noEV")
+        customMask = appendCustomMask(checked, customMask)
+        checked = self.request.get("noPM")
+        customMask = appendCustomMask(checked, customMask)
         #Add event ID to invited users lists
         qrySelf = User.query(User.email == user.email()).get()
         qrySelf.eventAcceptedList.append(eventID)
@@ -418,13 +437,14 @@ class ProcessEvent(webapp2.RequestHandler):
         #Create event
         event = Event(eventID = eventID, invitedUsers = emailinvited, acceptedUsers = [user.email()], 
                       name = eventname, location = eventloc, description = description,
-                      dateRange = [start, end])
+                      dateRange = [start, end], customMask = customMask)
         event.put()
                
         numFriends = str(len(qrySelf.friendRequestList))
         numEventReq = str(len(qrySelf.eventList))
         template = jinja_environment.get_template('processevent.html')
-        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "eventname": eventname, "eventloc": eventloc , "invited": invite , "startdate": start , "enddate": end , "description": description, "month":monthNow, "year":yearNow}))
+        self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "eventname": eventname, "eventloc": eventloc , "invited": invite , "startdate": start , "enddate": end , 
+        "description": description, "month":monthNow, "year":yearNow, "mask" :customMask}))
         self.response.write(BACKHOME)
 
 def listifyEvent(e, abbr):
@@ -449,6 +469,17 @@ def listifyEvent(e, abbr):
         eventlst.append(invited)
         eventlst.append(accepted)
         eventlst.append(rejected)
+        # For special customization
+        specialCust = ""
+        if e.customMask[0] == "0":
+            specialCust = specialCust + "No morning, "
+        if e.customMask[1] == "0":
+            specialCust = specialCust + "No afternoon, "
+        if e.customMask[2] == "0":
+            specialCust = specialCust + "No evening, "
+        if e.customMask[3] == "0":
+            specialCust = specialCust + "No night, "
+        eventlst.append(json.dumps(specialCust[:specialCust.rfind(',')]))
     return eventlst
     
 class CheckEvent(webapp2.RequestHandler):
@@ -659,24 +690,37 @@ class BestDay(webapp2.RequestHandler):
                 usercalendars2.append(int(usermonth2.replace("0b1", ""), 2)) # Calendar for user in 2nd month of query.
         #testing purposes
         #get free day
-        qryEvent.datetime = getBestDay(usercalendars,usercalendars2, startMonth, sameMonth, startYear, self)
+        specialReq = qryEvent.customMask
+        qryEvent.datetime = getBestDay(usercalendars,usercalendars2, startMonth, sameMonth, startYear, specialReq, numDayInMonth1, numDayInMonth2, self)
         qryEvent.put()
         event = listifyEvent(qryEvent, 1)
         numFriends = str(len(qrySelf.friendRequestList))
         numEventReq = str(len(qrySelf.eventList))
         template = jinja_environment.get_template('eventdetails.html')
         self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "counter":numFriends, "numEventReq":numEventReq, 'e': event, 'status': status, "month":monthNow, "year":yearNow}))
- 
+
+# mask is string with 4 characters (morning, afternoon, evening, night), numDaysInMonth is integer.
+def generateReqMask(mask, numDaysInMonth):
+    resultMask = "1" # MSB padding
+    for i in range(numDaysInMonth):
+        resultMask = resultMask + mask
+    return int(resultMask,2)
+         
 # Returns best day as a 9 digit integer in ddmmyyyyt format, dd = day, mm = month, yyyy = year, t = time (0,1,2,3) 
 # Returns -1 is no free day found.
-# lst [0] contains mask, [1...] contains user calendar. monthNum is startMonth, sameMonth is boolean, startYear is string  
-def getBestDay(lst1, lst2, monthNum, sameMonth, startYear, self):    
+# lst [0] contains mask, [1...] contains user calendar. monthNum is startMonth, sameMonth is boolean, startYear is string, specialMask is a string 
+# month1Days and month2Days is integer which tells us how many days in that month.
+def getBestDay(lst1, lst2, monthNum, sameMonth, startYear,specialMask, month1Days, month2Days, self):    
     a = lst1[0]
     b = lst2[0]
+    reqMask1 = generateReqMask(specialMask, month1Days)
+    reqMask2 = generateReqMask(specialMask, month2Days)
     for i in lst1: # a = bitwise and of mask with all users' calendar
         a = a & i
     for i in lst2: # b = bitwise and of mask with all users' calendar
-        b = b & i
+        b = b & i  
+    a = a & reqMask1   # mask with special requirements 
+    b = b & reqMask2   # mask with special requirements 
     a = str(bin(a))
     b = str(bin(b))
     # first free date stored here. Start from 3rd index to avoid 0b1 substring.

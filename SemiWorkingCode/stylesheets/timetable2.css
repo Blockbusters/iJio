@@ -65,10 +65,12 @@ input[type=submit]{
 
 
 .information{
+    padding: 5px;
     border: 2px solid black;
 }
 
 .header{
     padding-top: 0px;
     background-color: #B3C7D0;
+    text-align: center;
 }

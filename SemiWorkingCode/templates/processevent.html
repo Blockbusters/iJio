@@ -26,11 +26,25 @@
             Event Created!
         </div>
         <div class = "words">
-            <p>Event: {{eventname}} @ {{eventloc}}
-            <p>Invited Users: {{invited}}
-            <p>Date Range: {{startdate}} to {{enddate}}            
-            <p>Description of event: {{description}}
-            <p>
+            <p>Event: {{eventname}} @ {{eventloc}}</p>
+            <p>Invited Users: {{invited}}</p>
+            <p>Date Range: {{startdate}} to {{enddate}}</p>
+            <p>Description of event: {{description}}</p>
+            <p class="special"><span style="text-decoration:underline; font-weight:bold;">Special requirements:</span>
+                {% if mask[0] == "0" %}
+                    <br>No morning
+                {% endif %}
+                {% if mask[1] == "0" %}
+                    <br>No afternoon
+                {% endif %}
+                {% if mask[2] == "0" %}
+                    <br>No evening
+                {% endif %}
+                {% if mask[3] == "0" %}
+                    <br>No night
+                {% endif %}
+            </p>
+            <p></p>
         </div>
     </body>
 </html>

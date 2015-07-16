@@ -229,8 +229,8 @@ function printEvents(lstlstEvent) {
             }
     }
 }
-//      0       1     2       3          4           5         6        7          8
-//  [eventID, date, name, location, description, dateRange, invited, accepted, rejected]
+//      0       1     2       3          4           5         6        7          8            9
+//  [eventID, date, name, location, description, dateRange, invited, accepted, rejected, special customization]
 function printEvent(lstEvent) {
     document.write(lstEvent[2] + " at " + lstEvent[3] +" on " + stringifyTime(lstEvent[1]));
     document.write('  <a class = "link" href = /eventdetails?id=');
@@ -301,6 +301,11 @@ function printE(lstEvent, status) {
     document.write('<div class="row"><div class="col-md-5">');
     document.write('Date: </div><div class="col-md-7">');
     document.write(stringifyTime(lstEvent[1]));
+    document.write('</div></div>');
+    
+    document.write('<div class="row"><div class="col-md-5">');
+    document.write('Special Requirements: </div><div class="col-md-7">');
+    document.write(lstEvent[9]);
     document.write('</div></div>');
     
     document.write('<div class="row"><div class="col-md-2"></div>');

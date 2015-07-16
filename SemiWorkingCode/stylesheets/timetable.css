@@ -121,4 +121,10 @@ input[type=submit]{
     border-color: #B3C7D0;
     font-size: 20px;
 }
+
+.special{
+    border: 2px solid #B3C7D0;
+    margin-left: 600px;
+    margin-right: 600px;
+}
     

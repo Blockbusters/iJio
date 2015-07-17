@@ -1,4 +1,3 @@
-For your convenience, just get the files from allchange.zip lol
 <h1>Food for thought:</h1>
 ![](http://i.imgur.com/s3XzwKF.jpg)
 ![](http://i.imgur.com/HSHK3jM.jpg)

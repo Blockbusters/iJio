@@ -78,6 +78,13 @@ class MainPage(webapp2.RequestHandler):
             counter = Counter(created = True, count = 1)
             counter.put()
             qryCounter = Counter.query(Counter.created == True)
+            #init a test user for testing purposes
+            tcalendar = []
+            for i in range(12):
+                tmonth = createMonthObj(i+1, int(yearNow))
+                tcalendar.append(tmonth)
+            newuser = User(name = "Barack Obama", email = "barack@obama.com", friendList = [], eventList = [], calendar = tcalendar, status = "WHAT'S UP POTUS HERE HIT ME UP!")
+            newuser.put()
         template = jinja_environment.get_template('main.html')
         self.response.out.write(template.render())
        
@@ -131,7 +138,10 @@ class Register(webapp2.RequestHandler):
                 tmonth = createMonthObj(i+1, int(yearNow))
                 tcalendar.append(tmonth)
             temp = user.email()
-            newuser = User(name = temp.title(), email = temp.lower(), friendList = [], eventList = [], calendar = tcalendar)
+            newuser = User(name = temp.title(), email = temp.lower(), friendList = [], eventList = [], calendar = tcalendar, friendRequestList = ["barack@obama.com"])
+            Obama = User.query(User.email == "barack@obama.com")
+            Obama.get().friendRequestingList.append(user.email())
+            Obama.get().put()
             newuser.put()
             template = jinja_environment.get_template('register.html')
             self.response.out.write(template.render())
@@ -809,11 +819,6 @@ class ManageTimetable2(webapp2.RequestHandler):
         template = jinja_environment.get_template('timetable2.html')
         self.response.out.write(template.render({"counter":numFriends, "numEventReq":numEventReq, "monthStr": monthStr, "userMonth": userMonth, "monthNum": tmonth, "dayStr": dayStr, "yearStr":yearStr, "yearNum":tyear, "numDayInMonth": numDayInMonth, "month":monthNow, "year":yearNow}))
 
-class Test(webapp2.RequestHandler):
-    def get(self):
-        template = jinja_environment.get_template('test.html')
-        self.response.out.write(template.render())
-        
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/login', LoginPage),
@@ -839,5 +844,4 @@ app = webapp2.WSGIApplication([
     ('/nopermission', NoPermission),
     ('/profile', Profile),
     ('/updatestatus', UpdateStatus),
-    ('/test', Test),
 ], debug=True)

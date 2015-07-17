@@ -15,17 +15,18 @@
             function validateForm() {
                 var x = document.forms["myForm"]["invite"].value;
                 if (x == "No friends") {
-                    alert("Did you forget to jio your friends?");
+                    popup("Did you forget to jio your friends?");
                     return false;
                 }
                 if (document.forms["myForm"]["datestart"].value == "" || document.forms["myForm"]["dateend"].value == "") {
-                    alert("Did you forget to set your date range?");
+                    popup("Did you forget to set your date range?");
                     return false;
                 }
             }   
         </script>
     </head>
     <body class = "bg">
+        <div id="disablingDiv"></div>
         <div class="header container">
             <div class="row">
                 <div class="col-md-1">
@@ -124,6 +125,11 @@
                     <div class="col-md-3">
                         <button type="button" class="click" method="get" onClick="location.href='/home' ">Cancel</button>
                     </div>
+                </div>
+                
+                <div class="popup">
+                    <p id="errormsg">This is a test message.</p>
+                    <button id="clear-popup" type = "button">Yes</button>
                 </div>
             </form>
         </div>

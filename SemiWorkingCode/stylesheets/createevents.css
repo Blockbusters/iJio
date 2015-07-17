@@ -81,3 +81,52 @@
     resize: none;
     visibility:hidden;
 }
+
+.popup{
+    position: absolute;
+    top: 200px;
+    left: 570px;
+    width: 700px;
+    height: 200px;
+    border: 4px solid #61483D;
+    background-color: #B3C7D0;
+    display: none;
+    z-index: 5000;
+}
+
+#errormsg{
+    padding-top: 50px;
+    font-size: 25px;
+}
+
+#clear-popup{
+    padding: 10px 10px; /* Area of space (vertical, horizontal)*/
+    border-radius: 10px; /*Button Shape*/
+    width: 100px;
+    background-color: #F5FFFE; /*Button background colour*/
+    color: #61483D; /*font color*/
+    border-color: #B3C7D0;
+}
+
+#disablingDiv
+{
+    /* Do not display it on entry */
+    display: none; 
+ 
+    /* Display it on the layer with index 1001.
+       Make sure this is the highest z-index value
+       used by layers on that page */
+    z-index:4000;
+     
+    /* make it cover the whole screen */
+    position: absolute; 
+    top: 0%; 
+    left: 0%; 
+    width: 100%; 
+    height: 100%; 
+ 
+    /* make it white but fully transparent */
+    background-color: white; 
+    opacity:.00; 
+    filter: alpha(opacity=00); 
+}

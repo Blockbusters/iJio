@@ -67,6 +67,18 @@ var main = function(){
         format: 'd/m/Y', // Format to display date. e.g. 20/06/2015
         direction: [1, 21] // Calendar starts tomorrow and ends 21 days after that.
     });
+    
+    // Clicking ok on the popup
+    $('#clear-popup').on('click', function(){
+        $('.popup').fadeOut(100);
+        $('#disablingDiv').css('display','none');
+    });
 };
+
+function popup(display){
+    $('.popup').fadeIn(500);
+    $('#errormsg').text(display);
+    $('#disablingDiv').css('display','block');
+}
 
 $(document).ready(main);
